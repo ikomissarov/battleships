@@ -1,6 +1,9 @@
 var form = document.forms.publish;
 var chat = document.getElementById('subscribe');
 
+var myName = getCookie("myName");
+var hisName = getCookie("hisName");
+
 form.onsubmit = function () {
     var message = form.message.value;
     if (message) {
@@ -19,7 +22,7 @@ function subscribe() {
 
         console.log(this);
         if (this.status == 200) {
-            showMessage(this.responseText);
+            showMessage(hisName + ": " + this.responseText);
             subscribe();
             return;
         }
@@ -41,11 +44,19 @@ function sendMessage(message) {
     // если бы было много данных, то нужно было бы отослать JSON из объекта с ними
     // или закодировать их как-то иначе
     xhr.send(message);
-    showMessage(message);
+    showMessage(myName + ": " + message);
 }
 
 function showMessage(message) {
     var messageElem = document.createElement('div');
     messageElem.appendChild(document.createTextNode(message));
     chat.appendChild(messageElem);
+}
+
+// возвращает cookie с именем name, если есть, если нет, то undefined
+function getCookie(name) {
+    var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
 }

@@ -19,8 +19,8 @@ public class SubscribeServlet extends HttpServlet {
         Chat chat = user.getChat();
         String msg = "";
         try {
-            msg = chat.getOther(user.getId()).take();
-        } catch (InterruptedException e) {
+            msg = chat.getMessage(user);
+        } catch(InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println("subscribe msg = " + msg);

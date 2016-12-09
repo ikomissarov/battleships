@@ -21,8 +21,8 @@ public class PublishServlet extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
         Chat chat = user.getChat();
         try {
-            chat.getMine(user.getId()).put(msg);
-        } catch (InterruptedException e) {
+            chat.sendMessage(user, msg);
+        } catch(InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -4,10 +4,7 @@ import battleships.model.User;
 import battleships.model.WaitingRoom;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 /**
@@ -28,6 +25,8 @@ public class ChatStartServlet extends HttpServlet {
 
         session.setAttribute("user", user);
 
+        resp.addCookie(new Cookie("myName", user.getName()));
+        resp.addCookie(new Cookie("hisName", user.getChat().getOtherUser(user).getName()));
         resp.sendRedirect("chat.html");
     }
 }

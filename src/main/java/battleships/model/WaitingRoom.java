@@ -8,7 +8,7 @@ public class WaitingRoom {
 
     public synchronized void startChat(User user) {
         if (waitingUser != null) {
-            Chat chat = new Chat(waitingUser.getId(), user.getId());
+            Chat chat = new Chat(waitingUser, user);
             user.setChat(chat);
             waitingUser.setChat(chat);
             notify();
