@@ -24,6 +24,8 @@ public class SubscribeServlet extends HttpServlet {
             e.printStackTrace();
         }
         System.out.println("subscribe msg = " + msg);
+
+        resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(msg);
     }
 }
