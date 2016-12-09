@@ -1,7 +1,38 @@
-<!DOCTYPE web-app PUBLIC
-        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <display-name>Battleships Web Application</display-name>
 
-<web-app>
-    <display-name>Archetype Created Web Application</display-name>
+    <listener>
+        <listener-class>battleships.InitListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>publish</servlet-name>
+        <servlet-class>battleships.PublishServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>publish</servlet-name>
+        <url-pattern>/publish</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>subscribe</servlet-name>
+        <servlet-class>battleships.SubscribeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>subscribe</servlet-name>
+        <url-pattern>/subscribe</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>chat-start</servlet-name>
+        <servlet-class>battleships.ChatStartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>chat-start</servlet-name>
+        <url-pattern>/init</url-pattern>
+    </servlet-mapping>
 </web-app>
