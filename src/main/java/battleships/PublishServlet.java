@@ -2,6 +2,8 @@ package battleships;
 
 import battleships.model.Chat;
 import battleships.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,17 +15,19 @@ import java.io.IOException;
  * @author Igor
  */
 public class PublishServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(PublishServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String msg = req.getReader().readLine();
-        System.out.println("publish msg = " + msg);
+        logger.debug("publish msg: [{}]", msg);
+
         User user = (User) req.getSession().getAttribute("user");
         Chat chat = user.getChat();
         try {
             chat.sendMessage(user, msg);
         } catch(InterruptedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 }
