@@ -1,4 +1,6 @@
 var POISON_MSG = "POISON_MSG";
+var errorCount = 0;
+
 var form = document.forms.publish;
 var chat = document.getElementById('subscribe');
 
@@ -30,6 +32,7 @@ function subscribe() {
 
         console.log(this);
         if (this.status == 200) {
+            errorCount = 0;
             var msg = this.responseText;
             if (msg === POISON_MSG) {
                 showMessage(hisName + " left the chat.", "red");
@@ -42,7 +45,11 @@ function subscribe() {
 
         showMessage("<b>Error:</b> " + this.status + " - " + this.statusText, "red");
 
-        setTimeout(subscribe, 1000); // попробовать ещё раз через 1 сек
+        if (++errorCount <= 10) {
+            setTimeout(subscribe, 1000); // попробовать ещё раз через 1 сек
+        } else {
+            showMessage("Disconnected from chat.", "red");
+        }
     };
     xhr.open("GET", 'subscribe', true);
     xhr.send();
