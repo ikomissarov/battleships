@@ -1,3 +1,4 @@
+var POISON_MSG = "POISON_MSG";
 var form = document.forms.publish;
 var chat = document.getElementById('subscribe');
 
@@ -13,6 +14,13 @@ form.onsubmit = function () {
     return false;
 };
 
+window.onunload = function () {
+    var xhr = new XMLHttpRequest();
+    //false param means that request is NOT async as usually so browser will not close before sending it
+    xhr.open("POST", 'publish', false);
+    xhr.send(POISON_MSG);
+};
+
 subscribe();
 
 function subscribe() {
@@ -22,8 +30,13 @@ function subscribe() {
 
         console.log(this);
         if (this.status == 200) {
-            showMessage(hisName + ": " + this.responseText);
-            subscribe();
+            var msg = this.responseText;
+            if (msg === POISON_MSG) {
+                showMessage(hisName + " left the chat.");
+            } else {
+                showMessage(hisName + ": " + msg);
+                subscribe();
+            }
             return;
         }
 

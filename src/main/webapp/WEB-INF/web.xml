@@ -8,6 +8,9 @@
     <listener>
         <listener-class>battleships.InitListener</listener-class>
     </listener>
+    <listener>
+        <listener-class>battleships.SessionListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>publish</servlet-name>
@@ -29,10 +32,14 @@
 
     <servlet>
         <servlet-name>chat-start</servlet-name>
-        <servlet-class>battleships.ChatStartServlet</servlet-class>
+        <servlet-class>battleships.SessionStartServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>chat-start</servlet-name>
         <url-pattern>/init</url-pattern>
     </servlet-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 </web-app>

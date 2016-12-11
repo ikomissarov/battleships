@@ -1,6 +1,7 @@
 package battleships;
 
 import battleships.model.Chat;
+import battleships.model.Constants;
 import battleships.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,13 @@ public class PublishServlet extends HttpServlet {
         logger.debug("publish msg: [{}]", msg);
 
         User user = (User) req.getSession().getAttribute("user");
+
+        if(msg.equals(Constants.POISON_MSG)) {
+            logger.info("Session destroy requested for {}.", user);
+            req.getSession().invalidate();
+            return;
+        }
+
         Chat chat = user.getChat();
         try {
             chat.sendMessage(user, msg);

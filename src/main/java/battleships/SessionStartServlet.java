@@ -12,8 +12,8 @@ import java.io.IOException;
 /**
  * @author Igor
  */
-public class ChatStartServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(ChatStartServlet.class);
+public class SessionStartServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(SessionStartServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
