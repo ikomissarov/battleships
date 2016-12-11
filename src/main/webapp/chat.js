@@ -32,17 +32,15 @@ function subscribe() {
         if (this.status == 200) {
             var msg = this.responseText;
             if (msg === POISON_MSG) {
-                showMessage(hisName + " left the chat.");
+                showMessage(hisName + " left the chat.", "red");
             } else {
-                showMessage(hisName + ": " + msg);
+                showMessage("<b>" + hisName + ":</b> " + msg, "green");
                 subscribe();
             }
             return;
         }
 
-        if (this.status != 404) { // 404 может означать, что сервер перезагружается
-            showMessage(this.statusText); // показать ошибку
-        }
+        showMessage("<b>Error:</b> " + this.status + " - " + this.statusText, "red");
 
         setTimeout(subscribe, 1000); // попробовать ещё раз через 1 сек
     };
@@ -57,12 +55,13 @@ function sendMessage(message) {
     // если бы было много данных, то нужно было бы отослать JSON из объекта с ними
     // или закодировать их как-то иначе
     xhr.send(message);
-    showMessage(myName + ": " + message);
+    showMessage("<b>" + myName + ":</b> " + message, "blue");
 }
 
-function showMessage(message) {
+function showMessage(message, className) {
     var messageElem = document.createElement('div');
-    messageElem.appendChild(document.createTextNode(message));
+    messageElem.className = className;
+    messageElem.innerHTML = message;
     chat.appendChild(messageElem);
 }
 
