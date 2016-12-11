@@ -2,7 +2,9 @@ package battleships;
 
 import battleships.model.Chat;
 import battleships.model.Constants;
+import battleships.model.Response;
 import battleships.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,7 @@ import java.io.IOException;
  */
 public class PublishServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(PublishServlet.class);
+    private final ObjectMapper jsonMapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,10 +35,19 @@ public class PublishServlet extends HttpServlet {
         }
 
         Chat chat = user.getChat();
+        Response response;
         try {
-            chat.sendMessage(user, msg);
+            if(chat.sendMessage(user, msg)) {
+                response = new Response(Response.Type.MSG, msg, user.getName());
+            } else {
+                response = new Response(Response.Type.ERROR, "Unable to send a message, try again.");
+            }
         } catch(InterruptedException e) {
             logger.error(e.getMessage(), e);
+            response = new Response(Response.Type.ERROR, e.getLocalizedMessage());
         }
+
+        resp.setContentType("application/json; charset=UTF-8");
+        jsonMapper.writeValue(resp.getOutputStream(), response);
     }
 }

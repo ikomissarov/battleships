@@ -39,6 +39,16 @@
         <url-pattern>/init</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>no-session</filter-name>
+        <filter-class>battleships.NoSessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>no-session</filter-name>
+        <servlet-name>publish</servlet-name>
+        <servlet-name>subscribe</servlet-name>
+    </filter-mapping>
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
