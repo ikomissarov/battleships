@@ -12,12 +12,12 @@ form.onsubmit = function () {
     return false;
 };
 
-window.onunload = function () {
-    var xhr = new XMLHttpRequest();
-    //false param means that request is NOT async as usually so browser will not close before sending it
-    xhr.open("POST", 'publish', false);
-    xhr.send("POISON_MSG");
-};
+// window.onunload = function () {
+//     var xhr = new XMLHttpRequest();
+//     //false param means that request is NOT async as usually so browser will not close before sending it
+//     xhr.open("POST", 'publish', false);
+//     xhr.send("POISON_MSG");
+// };
 
 subscribe();
 
