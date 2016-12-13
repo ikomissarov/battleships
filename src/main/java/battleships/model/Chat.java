@@ -14,8 +14,8 @@ public class Chat {
     private Map.Entry<User, BlockingQueue<String>> second;
 
     public Chat(User firstUser, User secondUser) {
-        first = new AbstractMap.SimpleImmutableEntry<>(firstUser, new LinkedBlockingQueue<>());
-        second = new AbstractMap.SimpleImmutableEntry<>(secondUser, new LinkedBlockingQueue<>());
+        first = new AbstractMap.SimpleEntry<>(firstUser, new LinkedBlockingQueue<>());
+        second = new AbstractMap.SimpleEntry<>(secondUser, new LinkedBlockingQueue<>());
     }
 
     private BlockingQueue<String> getMine(User user) {
@@ -36,5 +36,14 @@ public class Chat {
 
     public String getMessage(User user) throws InterruptedException {
         return getOther(user).poll(Constants.TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    public void leaveChat(User user) throws InterruptedException {
+        sendMessage(user, Constants.POISON_MSG);
+        if (user.equals(first.getKey())) {
+            first.setValue(null);
+        } else {
+            second.setValue(null);
+        }
     }
 }

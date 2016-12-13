@@ -1,6 +1,5 @@
 package battleships;
 
-import battleships.model.Constants;
 import battleships.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +22,8 @@ public class SessionListener implements HttpSessionListener {
         User user = (User) httpSessionEvent.getSession().getAttribute("user");
         logger.info("Session destroyed for {}.", user);
         try {
-            user.getChat().sendMessage(user, Constants.POISON_MSG);
-        } catch(InterruptedException e) {
+            user.getChat().leaveChat(user);
+        } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
         }
     }

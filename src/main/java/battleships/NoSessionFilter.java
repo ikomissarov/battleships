@@ -26,7 +26,7 @@ public class NoSessionFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpSession session = ((HttpServletRequest) servletRequest).getSession(false);
-        if(session == null || session.getAttribute("user") == null) {
+        if (session == null || session.getAttribute("user") == null) {
             logger.info("Redirecting user with no session.");
             Response response = new Response(Response.Type.REDIRECT, "index.html");
             jsonMapper.writeValue(servletResponse.getOutputStream(), response);

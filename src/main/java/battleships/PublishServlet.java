@@ -28,7 +28,7 @@ public class PublishServlet extends HttpServlet {
 
         User user = (User) req.getSession().getAttribute("user");
 
-        if(msg.equals(Constants.POISON_MSG)) {
+        if (msg.equals(Constants.POISON_MSG)) {
             logger.info("Session destroy requested for {}.", user);
             req.getSession().invalidate();
             return;
@@ -37,12 +37,12 @@ public class PublishServlet extends HttpServlet {
         Chat chat = user.getChat();
         Response response;
         try {
-            if(chat.sendMessage(user, msg)) {
+            if (chat.sendMessage(user, msg)) {
                 response = new Response(Response.Type.MSG, msg, user.getName());
             } else {
                 response = new Response(Response.Type.ERROR, "Unable to send a message, try again.");
             }
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
             response = new Response(Response.Type.ERROR, e.getLocalizedMessage());
         }

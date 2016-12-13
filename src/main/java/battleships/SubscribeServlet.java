@@ -31,8 +31,8 @@ public class SubscribeServlet extends HttpServlet {
             msg = chat.getMessage(user);
             logger.debug("subscribe msg: [{}]", msg);
 
-            if(msg != null) {
-                if(msg.equals(Constants.POISON_MSG)) {
+            if (msg != null) {
+                if (msg.equals(Constants.POISON_MSG)) {
                     response = new Response(Response.Type.QUIT, msg, chat.getOtherUser(user).getName());
                 } else {
                     response = new Response(Response.Type.MSG, msg, chat.getOtherUser(user).getName());
@@ -40,7 +40,9 @@ public class SubscribeServlet extends HttpServlet {
             } else {
                 response = new Response(Response.Type.NO_MSG);
             }
-        } catch(InterruptedException e) {
+        } catch (NullPointerException e) {
+            response = new Response(Response.Type.QUIT, null, chat.getOtherUser(user).getName());
+        } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
             response = new Response(Response.Type.ERROR, e.getLocalizedMessage());
         }
