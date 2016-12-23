@@ -1,0 +1,119 @@
+table.board {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+tr.board-row {
+
+}
+
+td {
+    width: 30px;
+    height: 30px;
+    text-align: right;
+    color: grey;
+    font-weight: bold;
+    padding: 3px;
+}
+
+td.board-cell {
+    border: 1px solid blanchedalmond;
+    background-color: #fffed7;
+    cursor: context-menu;
+}
+
+td.board-cell:hover {
+    background-color: blanchedalmond;
+}
+
+td.board-ship {
+    background-color: #46b8da;
+}
+
+td.board-ship:hover {
+    background-color: #368bff;
+}
+
+td.board-hit {
+    background-color: #d43f3a;
+}
+
+td.board-hit:hover {
+    background-color: #cd080e;
+}
+
+td.board-miss {
+    background-color: #f7ff45;
+}
+
+td.board-miss:hover {
+    background-color: #fcff0d;
+}
+
+.panel-body {
+    padding: 5px;
+}
+
+.panel-heading, .panel-footer {
+    text-align: center;
+}
+
+.alert {
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/*=========== Панелька загрузки ============================*/
+#loading {
+
+}
+
+#loading_cont {
+    position: absolute;
+    left: 46%;
+    top: 43%;
+    margin-left: -45px;
+    padding: 2px;
+    z-index: 20001;
+    height: auto;
+    border: 1px solid #ccc;
+}
+
+#loading_cont a {
+    color: black;
+}
+
+#loading_cont .loading-indicator {
+    background: white;
+    color: black;
+    font: bold 13px tahoma, arial, helvetica;
+    padding: 10px;
+    margin: 0;
+    height: auto;
+}
+
+#loading_cont .loading-indicator img {
+    margin-right: 8px;
+    float: left;
+    vertical-align: top;
+}
+
+#loading-msg {
+    font: normal 10px arial, tahoma, sans-serif;
+}
+
+#glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 20000;
+    filter: Alpha(Opacity=75);
+    opacity: 0.75;
+    background-color: #000000;
+}

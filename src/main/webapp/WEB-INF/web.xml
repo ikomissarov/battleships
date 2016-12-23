@@ -39,6 +39,31 @@
         <url-pattern>/init</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>game-ready</servlet-name>
+        <servlet-class>battleships.GameReadyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>game-ready</servlet-name>
+        <url-pattern>/game/ready</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>game-fire</servlet-name>
+        <servlet-class>battleships.GameFireServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>game-fire</servlet-name>
+        <url-pattern>/game/fire</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>game-subscribe</servlet-name>
+        <servlet-class>battleships.GameSubscribeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>game-subscribe</servlet-name>
+        <url-pattern>/game/subscribe</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>no-session</filter-name>
         <filter-class>battleships.NoSessionFilter</filter-class>
