@@ -1,19 +1,7 @@
 var LETTERS = [, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
+var blocked = true;
 
 $(document).ready(function () {
-    $('#showLoading').click(function () {
-        $('#loading').show();
-        setTimeout(function () {
-            $('#loading').hide();
-        }, 25000);
-    });
-
-    /*$(document).ajaxSend(function () {
-     $('#loading').show();
-     });
-     $(document).ajaxComplete(function () {
-     $('#loading').hide();
-     });*/
 
     subscribe.errorCount = 0;
     subscribe.onError = function () {
@@ -26,10 +14,6 @@ $(document).ready(function () {
 
     fillTable($('#myBoard'));
     fillTable($('#hisBoard'));
-
-    $('#alert').click(function () {
-        $(this).hide();
-    });
 
     $('#myBoard').find('.board-cell').click(function () {
         $(this).toggleClass('board-ship');
@@ -49,6 +33,9 @@ $(document).ready(function () {
 
         $.post('game/ready', fleet).done(function (data) {
             $('#hisBoard').find('.board-cell').click(function () {
+                if (blocked) return;
+
+                blocked = true;
                 var cell = this;
                 var col = $(cell).index();
                 var row = $(cell).closest('tr').index();
@@ -106,19 +93,19 @@ function onFire(row, col) {
 }
 
 function subscribe() {
-    $('#loading').show();
     $.getJSON('game/subscribe')
         .done(function (data) {
-            $('#loading').hide();
             switch (data.type) {
                 case "READY":
                     subscribe.errorCount = 0;
                     showMessage("Enemy's fleet has arrived. Start the battle!");
+                    blocked = false;
                     break;
                 case "FIRE":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to " + data.coords + ". Your turn.");
+                    showMessage("Enemy has fired to <b>" + data.coords[0] + LETTERS[data.coords[1]] + "</b>. Your turn.");
                     onFire(data.coords[0], data.coords[1]);
+                    blocked = false;
                     break;
                 case "EMPTY":
                     subscribe.errorCount = 0;
