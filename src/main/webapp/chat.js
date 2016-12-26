@@ -32,7 +32,7 @@ $(document).ready(function () {
 });
 
 function subscribe() {
-    $.getJSON('subscribe')
+    $.getJSON('chat/subscribe')
         .done(function (data) {
             switch (data.type) {
                 case "MSG":
@@ -59,8 +59,11 @@ function subscribe() {
 }
 
 function sendMessage(message) {
-    $.post('publish', message)
-        .done(function (data) {
+    $.post({
+        url: 'chat/publish',
+        data: message,
+        contentType: "text/plain;charset=utf-8"
+    }).done(function (data) {
             switch (data.type) {
                 case "MSG":
                     showMessage("<b>" + data.userName + ":</b> " + data.text, "blue");

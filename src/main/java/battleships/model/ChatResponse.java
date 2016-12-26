@@ -3,20 +3,24 @@ package battleships.model;
 /**
  * @author Igor
  */
-public class Response {
+public class ChatResponse {
     private Type type;
     private String text;
     private String userName;
 
-    public Response(Type type) {
+    public ChatResponse() {
+        //need default constructor for deserialization
+    }
+
+    public ChatResponse(Type type) {
         this(type, null);
     }
 
-    public Response(Type type, String text) {
+    public ChatResponse(Type type, String text) {
         this(type, text, null);
     }
 
-    public Response(Type type, String text, String userName) {
+    public ChatResponse(Type type, String text, String userName) {
         this.type = type;
         this.text = text;
         this.userName = userName;

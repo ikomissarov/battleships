@@ -11,6 +11,7 @@ public class WaitingRoom {
             Chat chat = new Chat(waitingUser, user);
             user.setChat(chat);
             waitingUser.setChat(chat);
+            //todo error prone, rework
             notify();
         } else {
             waitingUser = user;

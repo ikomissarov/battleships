@@ -6,11 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Start the chat</title>
   <link rel="stylesheet" href="bootstrap-3.3.7/css/bootstrap.css">
+  <script src="jquery/jquery-2.2.4.js"></script>
+  <script>
+      $(document).ready(function () {
+          $('#mainForm').submit(function () {
+              var formData = $(this).serialize();
+              $.post({
+                  url: 'init',
+                  data: formData,
+                  async: false
+              })
+                  .done(function (data) {
+                      window.open(data, '_self');
+                  })
+                  .fail(function (event, xhr, settings) {
+                      console.error(settings.url, ":", xhr);
+                      window.alert("<b>Error:</b> " + xhr.status + " - " + xhr.statusText);
+                  });
+              return false;
+          });
+      });
+  </script>
 </head>
 <body>
 
 <div class="container" style="padding: 10px">
-  <form action="init" method="post">
+  <form id="mainForm">
     <label>Enter your name: <input type="text" name="name"/></label>
     <input type="submit" value="Start the chat"/>
   </form>
