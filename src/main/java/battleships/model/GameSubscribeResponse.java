@@ -6,7 +6,7 @@ package battleships.model;
 public class GameSubscribeResponse {
     private Type type;
     private String text;
-    private int[] coords = new int[2];
+    private Coords coords;
 
     public GameSubscribeResponse(Type type) {
         this(type, null);
@@ -16,7 +16,7 @@ public class GameSubscribeResponse {
         this(type, text, null);
     }
 
-    public GameSubscribeResponse(Type type, String text, int[] coords) {
+    public GameSubscribeResponse(Type type, String text, Coords coords) {
         this.type = type;
         this.text = text;
         this.coords = coords;
@@ -30,7 +30,7 @@ public class GameSubscribeResponse {
         return text;
     }
 
-    public int[] getCoords() {
+    public Coords getCoords() {
         return coords;
     }
 

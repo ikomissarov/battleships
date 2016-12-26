@@ -27,11 +27,15 @@ $(document).ready(function () {
         $('#myBoard').find('.board-ship').each(function (i, cell) {
             var col = $(cell).index();
             var row = $(cell).closest('tr').index();
-            fleet.ships.push([row, col]);
+            fleet.ships.push({'row': row, 'col': col});
         });
         console.log(fleet);
 
-        $.post('game/ready', fleet).done(function (data) {
+        $.post({
+            url: 'game/ready',
+            data: JSON.stringify(fleet),
+            contentType: "application/json;charset=utf-8"
+        }).done(function (data) {
             $('#hisBoard').find('.board-cell').click(function () {
                 if (blocked) return;
 
@@ -43,8 +47,11 @@ $(document).ready(function () {
                 var coords = {'row': row, 'col': col};
                 console.log(coords);
 
-                $.post('game/fire', coords)
-                    .done(function (data) {
+                $.post({
+                    url: 'game/fire',
+                    data: JSON.stringify(coords),
+                    contentType: "application/json;charset=utf-8"
+                }).done(function (data) {
                         switch (data.type) {
                             case "VICTORY":
                                 $(cell).addClass('board-hit');
@@ -103,8 +110,8 @@ function subscribe() {
                     break;
                 case "FIRE":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords[0] + LETTERS[data.coords[1]] + "</b>. Your turn.");
-                    onFire(data.coords[0], data.coords[1]);
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    onFire(data.coords.row, data.coords.col);
                     blocked = false;
                     break;
                 case "EMPTY":
@@ -112,8 +119,8 @@ function subscribe() {
                     subscribe();
                     break;
                 case "DEFEAT":
-                    showMessage("Enemy has fired to " + data.coords + ". You have lost the battle!");
-                    onFire(data.coords[0], data.coords[1]);
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!");
+                    onFire(data.coords.row, data.coords.col);
                     $('#hisBoard').find('.board-cell').off('click');
                     break;
                 case "QUIT":

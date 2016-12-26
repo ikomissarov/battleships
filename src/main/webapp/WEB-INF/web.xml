@@ -5,6 +5,16 @@
          version="3.0">
     <display-name>Battleships Web Application</display-name>
 
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
     <listener>
         <listener-class>battleships.InitListener</listener-class>
     </listener>
@@ -37,31 +47,6 @@
     <servlet-mapping>
         <servlet-name>chat-start</servlet-name>
         <url-pattern>/init</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>game-ready</servlet-name>
-        <servlet-class>battleships.GameReadyServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>game-ready</servlet-name>
-        <url-pattern>/game/ready</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>game-fire</servlet-name>
-        <servlet-class>battleships.GameFireServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>game-fire</servlet-name>
-        <url-pattern>/game/fire</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>game-subscribe</servlet-name>
-        <servlet-class>battleships.GameSubscribeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>game-subscribe</servlet-name>
-        <url-pattern>/game/subscribe</url-pattern>
     </servlet-mapping>
 
     <filter>
