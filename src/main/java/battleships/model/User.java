@@ -7,6 +7,7 @@ public class User {
     private final String id;
     private final String name;
     private Chat chat;
+    private Game game;
 
     public User(String id, String name) {
         this.id = id;
@@ -27,6 +28,29 @@ public class User {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     @Override

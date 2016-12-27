@@ -9,11 +9,15 @@ public class GameSubscribeResponse {
     private Coords coords;
 
     public GameSubscribeResponse(Type type) {
-        this(type, null);
+        this(type, null, null);
     }
 
     public GameSubscribeResponse(Type type, String text) {
         this(type, text, null);
+    }
+
+    public GameSubscribeResponse(Type type, Coords coords) {
+        this(type, null, coords);
     }
 
     public GameSubscribeResponse(Type type, String text, Coords coords) {

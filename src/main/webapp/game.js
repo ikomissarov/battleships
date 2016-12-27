@@ -78,12 +78,12 @@ $(document).ready(function () {
             });
 
             if (data.enemyReady) {
-                showMessage("Waiting for enemy's turn.");
+                showMessage("Enemy is ready. Start the battle!");
+                blocked = false;
             } else {
                 showMessage("Waiting for enemy's fleet to arrive.");
+                subscribe();
             }
-
-            subscribe();
         });
     });
 });
@@ -103,11 +103,6 @@ function subscribe() {
     $.getJSON('game/subscribe')
         .done(function (data) {
             switch (data.type) {
-                case "READY":
-                    subscribe.errorCount = 0;
-                    showMessage("Enemy's fleet has arrived. Start the battle!");
-                    blocked = false;
-                    break;
                 case "FIRE":
                     subscribe.errorCount = 0;
                     showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");

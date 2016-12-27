@@ -20,11 +20,11 @@ public class GameFireResponse {
         return type;
     }
 
-    public String isEnemyReady() {
+    public String getText() {
         return text;
     }
 
     public enum Type {
-        VICTORY, HIT, MISS, REDIRECT, ERROR
+        VICTORY, HIT, MISS, REDIRECT, QUIT, ERROR
     }
 }

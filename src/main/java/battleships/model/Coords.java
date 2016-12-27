@@ -25,6 +25,24 @@ public class Coords {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Coords coords = (Coords) o;
+
+        if (row != coords.row) return false;
+        return col == coords.col;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = row;
+        result = 31 * result + col;
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Coords{" +
                 "row=" + row +

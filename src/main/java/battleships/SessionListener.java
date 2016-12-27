@@ -23,6 +23,7 @@ public class SessionListener implements HttpSessionListener {
         logger.info("Session destroyed for {}.", user);
         try {
             user.getChat().leaveChat(user);
+            user.getGame().leaveGame(user);
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
         }
