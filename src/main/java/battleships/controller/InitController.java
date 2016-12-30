@@ -27,6 +27,13 @@ public class InitController {
 
         waitingRoom.startChat(user);
 
-        return "chat.html";
+        if (user.getChat() != null) {
+            String enemyName = user.getChat().getOtherUser(user).getName();
+            logger.debug("{} will play with {}.", user.getName(), enemyName);
+            return enemyName;
+        } else {
+            logger.debug("No enemy yet for {}.", user.getName());
+            return "";
+        }
     }
 }

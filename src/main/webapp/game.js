@@ -15,6 +15,8 @@ $(document).ready(function () {
     fillTable($('#myBoard'));
     fillTable($('#hisBoard'));
 
+    $('.enemyName').text(window.localStorage.getItem('enemyName'));
+
     $('#myBoard').find('.board-cell').click(function () {
         $(this).toggleClass('board-ship');
     });

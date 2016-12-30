@@ -6,25 +6,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Start the chat</title>
   <link rel="stylesheet" href="bootstrap-3.3.7/css/bootstrap.css">
+  <style>
+    /*=========== Spinner styles ============================*/
+    #loading {
+    }
+
+    #loading_cont {
+      position: absolute;
+      left: 46%;
+      top: 43%;
+      margin-left: -45px;
+      padding: 2px;
+      z-index: 20001;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+
+    #loading_cont a {
+      color: black;
+    }
+
+    #loading_cont .loading-indicator {
+      background: white;
+      color: black;
+      font: bold 13px tahoma, arial, helvetica;
+      padding: 10px;
+      margin: 0;
+      height: auto;
+    }
+
+    #loading_cont .loading-indicator img {
+      margin-right: 8px;
+      float: left;
+      vertical-align: top;
+    }
+
+    #loading-msg {
+      font: normal 10px arial, tahoma, sans-serif;
+    }
+
+    #glass {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 20000;
+      filter: Alpha(Opacity=75);
+      opacity: 0.75;
+      background-color: #000000;
+    }
+  </style>
   <script src="jquery/jquery-2.2.4.js"></script>
   <script>
       $(document).ready(function () {
           $('#mainForm').submit(function () {
               var formData = $(this).serialize();
+              $('#loading').show();
+              send(formData);
+              return false;
+          });
+
+          function send(data) {
               $.post({
                   url: 'init',
-                  data: formData,
-                  async: false
+                  data: data
               })
-                  .done(function (data) {
-                      window.open(data, '_self');
+                  .done(function (enemyName) {
+                      if (enemyName) {
+                          $('#loading').hide();
+                          window.localStorage.setItem('enemyName', enemyName);
+                          window.open('game.html', '_self');
+                      } else {
+                          send(data);
+                      }
                   })
                   .fail(function (event, xhr, settings) {
+                      $('#loading').hide();
                       console.error(settings.url, ":", xhr);
                       window.alert("<b>Error:</b> " + xhr.status + " - " + xhr.statusText);
                   });
-              return false;
-          });
+          }
       });
   </script>
 </head>
@@ -35,6 +97,17 @@
     <label>Enter your name: <input type="text" name="name"/></label>
     <input type="submit" value="Start the chat"/>
   </form>
+</div>
+
+<!-- Spinner -->
+<div id="loading" hidden>
+  <div id="loading_cont">
+    <div class="loading-indicator">
+      <img src="images/loading.gif" width="32" height="32"/>
+      Waiting for the second player... <br/> <span id="loading-msg">...</span>
+    </div>
+  </div>
+  <div id="glass"></div>
 </div>
 
 </body>

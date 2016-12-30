@@ -21,20 +21,12 @@ public class WaitingRoom {
             notify();
         } else {
             waitingUser = user;
-            while (true) {
-                try {
-                    wait();
-                    if (user.getChat() != null) {
-                        waitingUser = null;
-                        break;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    if (user.getChat() != null) {
-                        waitingUser = null;
-                        break;
-                    }
-                }
+            try {
+                wait(Constants.TIMEOUT * 1000);
+                waitingUser = null;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                waitingUser = null;
             }
         }
     }
