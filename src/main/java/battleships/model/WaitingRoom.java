@@ -1,5 +1,8 @@
 package battleships.model;
 
+import battleships.model.chat.Chat;
+import battleships.model.game.Game;
+
 /**
  * @author Igor
  */

@@ -1,4 +1,4 @@
-package battleships.model;
+package battleships.model.game;
 
 /**
  * @author Igor

@@ -1,4 +1,7 @@
-package battleships.model;
+package battleships.model.chat;
+
+import battleships.model.Constants;
+import battleships.model.User;
 
 import java.util.AbstractMap;
 import java.util.Map;

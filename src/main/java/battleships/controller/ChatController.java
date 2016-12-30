@@ -1,9 +1,10 @@
 package battleships.controller;
 
-import battleships.model.Chat;
-import battleships.model.ChatResponse;
+import battleships.model.CommonResponse;
 import battleships.model.Constants;
 import battleships.model.User;
+import battleships.model.chat.Chat;
+import battleships.model.chat.ChatResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -28,11 +29,11 @@ public class ChatController {
             if (chat.sendMessage(user, msg)) {
                 response = new ChatResponse(ChatResponse.Type.MSG, msg, user.getName());
             } else {
-                response = new ChatResponse(ChatResponse.Type.ERROR, "Unable to send a message, try again.");
+                response = new ChatResponse(CommonResponse.Type.ERROR, "Unable to send a message, try again.");
             }
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
-            response = new ChatResponse(ChatResponse.Type.ERROR, e.getLocalizedMessage());
+            response = new ChatResponse(CommonResponse.Type.ERROR, e.getLocalizedMessage());
         }
         return response;
     }
@@ -48,7 +49,7 @@ public class ChatController {
 
             if (msg != null) {
                 if (msg.equals(Constants.POISON_MSG)) {
-                    response = new ChatResponse(ChatResponse.Type.QUIT, msg, chat.getOtherUser(user).getName());
+                    response = new ChatResponse(CommonResponse.Type.QUIT, msg, chat.getOtherUser(user).getName());
                 } else {
                     response = new ChatResponse(ChatResponse.Type.MSG, msg, chat.getOtherUser(user).getName());
                 }
@@ -56,10 +57,10 @@ public class ChatController {
                 response = new ChatResponse(ChatResponse.Type.NO_MSG);
             }
         } catch (NullPointerException e) {
-            response = new ChatResponse(ChatResponse.Type.QUIT, null, chat.getOtherUser(user).getName());
+            response = new ChatResponse(CommonResponse.Type.QUIT, null, chat.getOtherUser(user).getName());
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
-            response = new ChatResponse(ChatResponse.Type.ERROR, e.getLocalizedMessage());
+            response = new ChatResponse(CommonResponse.Type.ERROR, e.getLocalizedMessage());
         }
         return response;
     }

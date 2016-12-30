@@ -1,6 +1,6 @@
 package battleships;
 
-import battleships.model.ChatResponse;
+import battleships.model.CommonResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class NoSessionFilter implements Filter {
         HttpSession session = ((HttpServletRequest) servletRequest).getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             logger.info("Redirecting user with no session.");
-            ChatResponse response = new ChatResponse(ChatResponse.Type.REDIRECT, "index.html");
+            CommonResponse response = new CommonResponse(CommonResponse.Type.REDIRECT, "index.html");
             jsonMapper.writeValue(servletResponse.getOutputStream(), response);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
