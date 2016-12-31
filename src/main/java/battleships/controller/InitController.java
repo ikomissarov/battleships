@@ -19,7 +19,7 @@ public class InitController {
     private static final Logger logger = LoggerFactory.getLogger(InitController.class);
     private final WaitingRoom waitingRoom = new WaitingRoom();
 
-    @RequestMapping(path = "/init", method = RequestMethod.POST)
+    @RequestMapping(path = "/init", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String init(HttpSession session, @RequestParam String name) {
         User user = new User(session.getId(), name);
         session.setAttribute("user", user);

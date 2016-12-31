@@ -3,6 +3,14 @@ var blocked = true;
 
 $(document).ready(function () {
 
+    $(document).ajaxSuccess(function (event, xhr, settings, data) {
+        console.log(settings.url, ":", data);
+    });
+
+    $(document).ajaxError(function (event, xhr, settings) {
+        console.error(settings.url, ":", xhr);
+    });
+
     subscribe.errorCount = 0;
     subscribe.onError = function () {
         if (++subscribe.errorCount <= 10) {
@@ -164,10 +172,8 @@ function onFire(row, col) {
     var cell = $('#myBoard').find('tr').eq(row).find('td').eq(col);
     if ($(cell).hasClass('board-ship')) {
         $(cell).addClass('board-hit');
-        //showMessage('Enemy has hit your ship.');
     } else {
         $(cell).addClass('board-miss');
-        //showMessage('Enemy has missed.');
     }
 }
 
@@ -207,7 +213,6 @@ function subscribe() {
 }
 
 function showMessage(message) {
-    console.info(message);
     $('#status').html(message);
 }
 
