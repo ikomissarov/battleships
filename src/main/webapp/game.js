@@ -28,60 +28,6 @@ $(document).ready(function () {
 
     $('.enemyName').text(window.localStorage.getItem('enemyName'));
 
-    $(myBoard).find('.board-cell').click(function () {
-        $(this).toggleClass('board-ship');
-    });
-
-    $(hisBoard).find('.board-cell').click(function () {
-        if (blocked) return;
-
-        blocked = true;
-        var cell = this;
-        var col = $(cell).index();
-        var row = $(cell).closest('tr').index();
-
-        var coords = {'row': row, 'col': col};
-        console.log(coords);
-
-        $.post({
-            url: 'game/fire',
-            data: JSON.stringify(coords),
-            contentType: "application/json;charset=utf-8"
-        }).done(function (data) {
-            switch (data.type) {
-                case "OVER":
-                    $(cell).addClass('board-hit');
-                    markSunkShip(hisBoard, row, col);
-                    markCellsAroundSunkShip(hisBoard, row, col);
-                    showMessage("You have sunk enemy's ship. You have won the battle!");
-                    $(hisBoard).find('.board-cell').off('click');
-                    break;
-                case "KILL":
-                    $(cell).addClass('board-hit').off('click');
-                    markSunkShip(hisBoard, row, col);
-                    markCellsAroundSunkShip(hisBoard, row, col);
-                    showMessage("You have sunk enemy's ship. Waiting for enemy's turn.");
-                    subscribe();
-                    break;
-                case "HIT":
-                    $(cell).addClass('board-hit').off('click');
-                    showMessage("You have hit enemy's ship. Waiting for enemy's turn.");
-                    subscribe();
-                    break;
-                case "MISS":
-                    $(cell).addClass('board-miss').off('click');
-                    showMessage("You have missed. Waiting for enemy's turn.");
-                    subscribe();
-                    break;
-                default:
-                    showErrorMessage("Error: " + data.text);
-            }
-        })
-            .fail(function (xhr, status) {
-                showErrorMessage("Error: " + status);
-            });
-    });
-
     $('#readyBtn').click(function () {
         var coords = new Array(11);
         for (var i = 0; i < coords.length; i++) {
@@ -126,6 +72,60 @@ $(document).ready(function () {
             }
         });
     });
+
+    $(myBoard).find('.board-cell').click(function () {
+        $(this).toggleClass('board-ship');
+    });
+
+    $(hisBoard).find('.board-cell').click(function () {
+        if (blocked) return;
+
+        blocked = true;
+        var cell = this;
+        var col = $(cell).index();
+        var row = $(cell).closest('tr').index();
+
+        var coords = {'row': row, 'col': col};
+        console.log(coords);
+
+        $.post({
+            url: 'game/fire',
+            data: JSON.stringify(coords),
+            contentType: "application/json;charset=utf-8"
+        }).done(function (data) {
+            switch (data.type) {
+                case "OVER":
+                    $(cell).addClass('board-hit');
+                    markSunkShip(hisBoard, row, col);
+                    markCellsAroundSunkShip(hisBoard, row, col);
+                    showMessage("You have sunk enemy's ship. You have won the battle!");
+                    $(hisBoard).find('.board-cell').off('click');
+                    break;
+                case "KILL":
+                    $(cell).addClass('board-hit').off('click');
+                    markSunkShip(hisBoard, row, col);
+                    markCellsAroundSunkShip(hisBoard, row, col);
+                    showMessage("You have sunk enemy's ship. Your turn.");
+                    blocked = false;
+                    break;
+                case "HIT":
+                    $(cell).addClass('board-hit').off('click');
+                    showMessage("You have hit enemy's ship. Your turn.");
+                    blocked = false;
+                    break;
+                case "MISS":
+                    $(cell).addClass('board-miss').off('click');
+                    showMessage("You have missed. Waiting for enemy's turn.");
+                    subscribe();
+                    break;
+                default:
+                    showErrorMessage("Error: " + data.text);
+            }
+        })
+            .fail(function (xhr, status) {
+                showErrorMessage("Error: " + status);
+            });
+    });
 });
 
 function subscribe() {
@@ -141,16 +141,16 @@ function subscribe() {
                     break;
                 case "KILL":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.");
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
-                    blocked = false;
+                    subscribe();
                     break;
                 case "HIT":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.");
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
-                    blocked = false;
+                    subscribe();
                     break;
                 case "MISS":
                     subscribe.errorCount = 0;
