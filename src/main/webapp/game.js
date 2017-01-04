@@ -97,7 +97,7 @@ $(document).ready(function () {
         console.log(ships);
 
         var errorText;
-        if (errorText = validate(ships)) {
+        if (errorText = validate(ships, coords)) {
             showErrorMessage(errorText);
             return;
         }
@@ -199,7 +199,7 @@ function buildShips(coords) {
     }
 }
 
-function validate(ships) {
+function validate(ships, coords) {
     var count = [];
     for (var i = 0; i < ships.length; i++) {
         var shipSize = ships[i].coords.length;
@@ -220,6 +220,36 @@ function validate(ships) {
     }
     if (count[1] !== 4) {
         return 'Must be FOUR 1-cell ship present!';
+    }
+
+    return validateNoCornersTouch(ships, coords);
+}
+
+function validateNoCornersTouch(ships, coords) {
+    for (var i = 0; i < ships.length; i++) {
+        var ship = ships[i];
+        for (var j = 0; j < ship.coords.length; j++) {
+            var row = ship.coords[j].row;
+            var col = ship.coords[j].col;
+            if (notOk(row - 1, col - 1) ||
+                notOk(row - 1, col + 1) ||
+                notOk(row + 1, col - 1) ||
+                notOk(row + 1, col + 1)) {
+                return 'Ships must NOT touch each other corners!';
+            }
+        }
+
+        function notOk(row, col) {
+            //no such cell or not a ship cell, ok
+            if (!validCoords(row, col) || coords[row][col] === undefined) return false;
+
+            for (var k = 0; k < ship.coords.length; k++) {
+                //the same ship cell, ok
+                if (ship.coords[k].row === row && ship.coords[k].col === col) return false;
+            }
+            //not the same ship cell, not ok, touching another ship
+            return true;
+        }
     }
 }
 
@@ -262,7 +292,7 @@ function findCell(board, row, col) {
 }
 
 function validCoords(row, col) {
-    return row > 0 && row <= 11 && col > 0 && col <= 11;
+    return row > 0 && row < 11 && col > 0 && col < 11;
 }
 
 function showMessage(message) {

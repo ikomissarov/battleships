@@ -1,5 +1,4 @@
 #### TODO:
-1. Validate case than ships touch each other corners
 1. Keep making turns if you hit
 1. Safety double click to fire
 1. jQuery best practices
