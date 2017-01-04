@@ -1,4 +1,4 @@
-var LETTERS = [, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
+var LETTERS = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
 var blocked = true;
 
 $(document).ready(function () {
@@ -20,16 +20,19 @@ $(document).ready(function () {
         }
     };
 
-    fillTable($('#myBoard'));
-    fillTable($('#hisBoard'));
+    var myBoard = $('#myBoard');
+    var hisBoard = $('#hisBoard');
+
+    fillTable(myBoard);
+    fillTable(hisBoard);
 
     $('.enemyName').text(window.localStorage.getItem('enemyName'));
 
-    $('#myBoard').find('.board-cell').click(function () {
+    $(myBoard).find('.board-cell').click(function () {
         $(this).toggleClass('board-ship');
     });
 
-    $('#hisBoard').find('.board-cell').click(function () {
+    $(hisBoard).find('.board-cell').click(function () {
         if (blocked) return;
 
         blocked = true;
@@ -48,11 +51,15 @@ $(document).ready(function () {
             switch (data.type) {
                 case "OVER":
                     $(cell).addClass('board-hit');
+                    markSunkShip(hisBoard, row, col);
+                    markCellsAroundSunkShip(hisBoard, row, col);
                     showMessage("You have sunk enemy's ship. You have won the battle!");
-                    $('#hisBoard').find('.board-cell').off('click');
+                    $(hisBoard).find('.board-cell').off('click');
                     break;
                 case "KILL":
                     $(cell).addClass('board-hit').off('click');
+                    markSunkShip(hisBoard, row, col);
+                    markCellsAroundSunkShip(hisBoard, row, col);
                     showMessage("You have sunk enemy's ship. Waiting for enemy's turn.");
                     subscribe();
                     break;
@@ -80,7 +87,7 @@ $(document).ready(function () {
         for (var i = 0; i < coords.length; i++) {
             coords[i] = new Array(11);
         }
-        $('#myBoard').find('.board-ship').each(function (i, cell) {
+        $(myBoard).find('.board-ship').each(function (i, cell) {
             var col = $(cell).index();
             var row = $(cell).closest('tr').index();
             coords[row][col] = true;
@@ -97,7 +104,7 @@ $(document).ready(function () {
 
         showMessage('OK!');
 
-        $('#myBoard').find('.board-cell').off('click');
+        $(myBoard).find('.board-cell').off('click');
         $(this).parent().slideUp('slow');
 
         $.post({
@@ -120,6 +127,54 @@ $(document).ready(function () {
         });
     });
 });
+
+function subscribe() {
+    var myBoard = $('#myBoard');
+    $.getJSON('game/subscribe')
+        .done(function (data) {
+            switch (data.type) {
+                case "OVER":
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!");
+                    $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
+                    markSunkShip(myBoard, data.coords.row, data.coords.col);
+                    $('#hisBoard').find('.board-cell').off('click');
+                    break;
+                case "KILL":
+                    subscribe.errorCount = 0;
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
+                    markSunkShip(myBoard, data.coords.row, data.coords.col);
+                    blocked = false;
+                    break;
+                case "HIT":
+                    subscribe.errorCount = 0;
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
+                    blocked = false;
+                    break;
+                case "MISS":
+                    subscribe.errorCount = 0;
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-miss');
+                    blocked = false;
+                    break;
+                case "EMPTY":
+                    subscribe.errorCount = 0;
+                    subscribe();
+                    break;
+                case "QUIT":
+                    showErrorMessage("Enemy has left the battlefield!");
+                    break;
+                case "REDIRECT":
+                    window.open(data.text, "_self");
+                    break;
+                default:
+                    showErrorMessage("Error: " + data.text);
+                    subscribe.onError();
+            }
+        })
+        .fail(subscribe.onError);
+}
 
 function buildShips(coords) {
     var ships = [];
@@ -168,48 +223,46 @@ function validate(ships) {
     }
 }
 
-function onFire(row, col) {
-    var cell = $('#myBoard').find('tr').eq(row).find('td').eq(col);
-    if ($(cell).hasClass('board-ship')) {
-        $(cell).addClass('board-hit');
-    } else {
-        $(cell).addClass('board-miss');
+function markSunkShip(board, row, col) {
+    if (!validCoords(row, col)) return;
+
+    var cell = findCell(board, row, col);
+    if (cell.hasClass('board-hit') && !cell.hasClass('board-kill')) {
+        cell.addClass('board-kill');
+        markSunkShip(board, row, col - 1);
+        markSunkShip(board, row, col + 1);
+        markSunkShip(board, row - 1, col);
+        markSunkShip(board, row + 1, col);
     }
 }
 
-function subscribe() {
-    $.getJSON('game/subscribe')
-        .done(function (data) {
-            switch (data.type) {
-                case "KILL":
-                case "HIT":
-                case "MISS":
-                    subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
-                    onFire(data.coords.row, data.coords.col);
-                    blocked = false;
-                    break;
-                case "OVER":
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!");
-                    onFire(data.coords.row, data.coords.col);
-                    $('#hisBoard').find('.board-cell').off('click');
-                    break;
-                case "EMPTY":
-                    subscribe.errorCount = 0;
-                    subscribe();
-                    break;
-                case "QUIT":
-                    showErrorMessage("Enemy has left the battlefield!");
-                    break;
-                case "REDIRECT":
-                    window.open(data.text, "_self");
-                    break;
-                default:
-                    showErrorMessage("Error: " + data.text);
-                    subscribe.onError();
-            }
-        })
-        .fail(subscribe.onError);
+function markCellsAroundSunkShip(board, row, col) {
+    if (!validCoords(row, col)) return;
+
+    var cell = findCell(board, row, col);
+
+    if (cell.hasClass('board-around-kill')) return;
+
+    cell.addClass('board-around-kill');
+
+    if (cell.hasClass('board-kill')) {
+        markCellsAroundSunkShip(board, row - 1, col - 1);
+        markCellsAroundSunkShip(board, row - 1, col);
+        markCellsAroundSunkShip(board, row - 1, col + 1);
+        markCellsAroundSunkShip(board, row, col + 1);
+        markCellsAroundSunkShip(board, row + 1, col + 1);
+        markCellsAroundSunkShip(board, row + 1, col);
+        markCellsAroundSunkShip(board, row + 1, col - 1);
+        markCellsAroundSunkShip(board, row, col - 1);
+    }
+}
+
+function findCell(board, row, col) {
+    return $(board).find('tr').eq(row).find('td').eq(col);
+}
+
+function validCoords(row, col) {
+    return row > 0 && row <= 11 && col > 0 && col <= 11;
 }
 
 function showMessage(message) {
@@ -225,22 +278,22 @@ function fillTable(table) {
     var row, cell;
     for (var i = 0; i < 11; i++) {
         row = $('<tr></tr>');
-        if (i) row.addClass('board-row');
-        for (var j = 0; j < 11; j++) {
-            cell = $('<td></td>');
-            if (i) {
-                if (j) {
-                    cell.addClass('board-cell');
-                } else {
-                    cell.text(i);
-                }
-            } else {
-                if (j) {
-                    cell.text(LETTERS[j]);
-                }
+
+        if (i) {
+            row.addClass('board-row');
+            for (var j = 0; j < 11; j++) {
+                cell = $('<td></td>');
+                if (j) cell.addClass('board-cell');
+                else cell.text(i); //this is vertical header
+                row.append(cell);
             }
-            row.append(cell);
+        } else { //this is horizontal header
+            for (var k = 0; k < 11; k++) {
+                cell = $('<td></td>').text(LETTERS[k]);
+                row.append(cell);
+            }
         }
+
         table.append(row);
     }
 }

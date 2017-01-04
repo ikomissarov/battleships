@@ -26,6 +26,14 @@ td.board-cell:hover {
     background-color: blanchedalmond;
 }
 
+td.board-around-kill {
+    background-color: #ffdcd2;
+}
+
+td.board-around-kill:hover {
+    background-color: #ffab9f;
+}
+
 td.board-ship {
     background-color: #46b8da;
 }
@@ -43,11 +51,19 @@ td.board-hit:hover {
 }
 
 td.board-miss {
-    background-color: #f7ff45;
+    background-color: #fff069;
 }
 
 td.board-miss:hover {
-    background-color: #fcff0d;
+    background-color: #fffe00;
+}
+
+td.board-kill {
+    background-color: #d43f3a;
+}
+
+td.board-kill:hover {
+    background-color: #cd080e;
 }
 
 .panel-body {
