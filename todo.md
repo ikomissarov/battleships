@@ -1,6 +1,5 @@
 #### TODO:
 1. jQuery best practices
-1. Add button to start a new game
 1. Restore game state on client refresh
 1. fix concurrency bug in WaitingRoom
 1. Add chat to the game page

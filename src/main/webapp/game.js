@@ -16,7 +16,7 @@ $(document).ready(function () {
         if (++subscribe.errorCount <= 10) {
             setTimeout(subscribe, 1000);
         } else {
-            showErrorMessage("Connection to the game is lost!");
+            showMessage("Connection to the game is lost!", 'alert-danger');
         }
     };
 
@@ -44,11 +44,11 @@ $(document).ready(function () {
 
         var errorText;
         if (errorText = validate(ships, coords)) {
-            showErrorMessage(errorText);
+            showMessage(errorText, 'alert-danger');
             return;
         }
 
-        showMessage('OK!');
+        showMessage('OK!', 'alert-success');
 
         $(myBoard).find('.board-cell').off('click');
         $(this).parent().slideUp('slow');
@@ -60,15 +60,15 @@ $(document).ready(function () {
         }).done(function (data) {
             switch (data.type) {
                 case "READY":
-                    showMessage("Enemy is ready. Start the battle!");
+                    showMessage("Enemy is ready. Start the battle!", 'alert-info');
                     blocked = false;
                     break;
                 case "NOT_READY":
-                    showMessage("Waiting for enemy's fleet to arrive.");
+                    showMessage("Waiting for enemy's fleet to arrive.", 'alert-warning');
                     subscribe();
                     break;
                 default:
-                    showErrorMessage("Error: " + data.text);
+                    showMessage("Error: " + data.text, 'alert-danger');
             }
         });
     });
@@ -105,32 +105,32 @@ $(document).ready(function () {
                     $(cell).addClass('board-hit');
                     markSunkShip(hisBoard, row, col);
                     markCellsAroundSunkShip(hisBoard, row, col);
-                    showMessage("You have sunk enemy's ship. You have won the battle!");
+                    showMessage("You have sunk enemy's ship. You have won the battle!", 'alert-success');
                     $(hisBoard).find('.board-cell').off('click');
                     break;
                 case "KILL":
                     $(cell).addClass('board-hit').off('click');
                     markSunkShip(hisBoard, row, col);
                     markCellsAroundSunkShip(hisBoard, row, col);
-                    showMessage("You have sunk enemy's ship. Your turn.");
+                    showMessage("You have sunk enemy's ship. Your turn.", 'alert-info');
                     blocked = false;
                     break;
                 case "HIT":
                     $(cell).addClass('board-hit').off('click');
-                    showMessage("You have hit enemy's ship. Your turn.");
+                    showMessage("You have hit enemy's ship. Your turn.", 'alert-info');
                     blocked = false;
                     break;
                 case "MISS":
                     $(cell).addClass('board-miss').off('click');
-                    showMessage("You have missed. Waiting for enemy's turn.");
+                    showMessage("You have missed. Waiting for enemy's turn.", 'alert-warning');
                     subscribe();
                     break;
                 default:
-                    showErrorMessage("Error: " + data.text);
+                    showMessage("Error: " + data.text, 'alert-danger');
             }
         })
             .fail(function (xhr, status) {
-                showErrorMessage("Error: " + status);
+                showMessage("Error: " + status, 'alert-danger');
             });
     });
 });
@@ -141,27 +141,27 @@ function subscribe() {
         .done(function (data) {
             switch (data.type) {
                 case "OVER":
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!");
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!", 'alert-danger');
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
                     $('#hisBoard').find('.board-cell').off('click');
                     break;
                 case "KILL":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.");
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
                     subscribe();
                     break;
                 case "HIT":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.");
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     subscribe();
                     break;
                 case "MISS":
                     subscribe.errorCount = 0;
-                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.");
+                    showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.", 'alert-info');
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-miss');
                     blocked = false;
                     break;
@@ -170,13 +170,13 @@ function subscribe() {
                     subscribe();
                     break;
                 case "QUIT":
-                    showErrorMessage("Enemy has left the battlefield!");
+                    showMessage("Enemy has left the battlefield!", 'alert-danger');
                     break;
                 case "REDIRECT":
                     window.open(data.text, "_self");
                     break;
                 default:
-                    showErrorMessage("Error: " + data.text);
+                    showMessage("Error: " + data.text, 'alert-danger');
                     subscribe.onError();
             }
         })
@@ -302,13 +302,9 @@ function validCoords(row, col) {
     return row > 0 && row < 11 && col > 0 && col < 11;
 }
 
-function showMessage(message) {
+function showMessage(message, className) {
     $('#status').html(message);
-}
-
-function showErrorMessage(message) {
-    console.error(message);
-    $('#status').html(message);
+    $('#statusBar').removeClass('alert-info alert-warning alert-success alert-danger').addClass(className);
 }
 
 function fillTable(table) {
