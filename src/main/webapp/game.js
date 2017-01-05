@@ -80,6 +80,12 @@ $(document).ready(function () {
     $(hisBoard).find('.board-cell').click(function () {
         if (blocked) return;
 
+        if (!$(this).hasClass('board-fire')) {
+            $(hisBoard).find('.board-fire').removeClass('board-fire');
+            $(this).addClass('board-fire');
+            return;
+        }
+
         blocked = true;
         var cell = this;
         var col = $(cell).index();
@@ -93,6 +99,7 @@ $(document).ready(function () {
             data: JSON.stringify(coords),
             contentType: "application/json;charset=utf-8"
         }).done(function (data) {
+            $(cell).removeClass('board-fire');
             switch (data.type) {
                 case "OVER":
                     $(cell).addClass('board-hit');

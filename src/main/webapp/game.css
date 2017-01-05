@@ -66,6 +66,14 @@ td.board-kill:hover {
     background-color: #cd080e;
 }
 
+td.board-fire {
+    background-color: #86ff6d;
+}
+
+td.board-fire:hover {
+    background-color: #3bff1c;
+}
+
 .panel-body {
     padding: 5px;
 }
