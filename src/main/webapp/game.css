@@ -82,11 +82,10 @@ td.board-fire:hover {
     text-align: center;
 }
 
-.alert {
+#new-game {
     position: fixed;
-    bottom: 5px;
-    left: 5px;
-    right: 5px;
-    margin-bottom: 0;
-    cursor: pointer;
+    top: 15px;
+    right: 15px;
+    color: #777;
+    text-decoration: underline;
 }
