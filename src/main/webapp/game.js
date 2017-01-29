@@ -80,6 +80,7 @@ $(document).ready(function () {
     $(hisBoard).find('.board-cell').click(function () {
         if (blocked) return;
 
+        //double click on cell to fire to avoid accidental fire
         if (!$(this).hasClass('board-fire')) {
             $(hisBoard).find('.board-fire').removeClass('board-fire');
             $(this).addClass('board-fire');
@@ -144,6 +145,7 @@ function subscribe() {
                     showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!", 'alert-danger');
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
+                    markCellsAroundSunkShip(myBoard, data.coords.row, data.coords.col);
                     $('#hisBoard').find('.board-cell').off('click');
                     break;
                 case "KILL":
@@ -151,6 +153,7 @@ function subscribe() {
                     showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
+                    markCellsAroundSunkShip(myBoard, data.coords.row, data.coords.col);
                     subscribe();
                     break;
                 case "HIT":
