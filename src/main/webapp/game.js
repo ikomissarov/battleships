@@ -50,7 +50,7 @@ $(document).ready(function () {
 
         showMessage('OK!', 'alert-success');
 
-        $(myBoard).off('click');
+        $(myBoard).off('click.gameTurn');
         $(this).parent().slideUp('slow');
 
         $.post({
@@ -73,11 +73,11 @@ $(document).ready(function () {
         });
     });
 
-    $(myBoard).on('click', '.board-cell', function () {
+    $(myBoard).on('click.gameTurn', '.board-cell', function () {
         $(this).toggleClass('board-ship');
     });
 
-    $(hisBoard).on('click', '.board-cell:not(.board-hit):not(.board-miss)', function () {
+    $(hisBoard).on('click.gameTurn', '.board-cell:not(.board-hit):not(.board-miss)', function () {
         if (blocked) return;
 
         //double click on cell to fire to avoid accidental fire
@@ -107,7 +107,7 @@ $(document).ready(function () {
                     markSunkShip(hisBoard, row, col);
                     markCellsAroundSunkShip(hisBoard, row, col);
                     showMessage("You have sunk enemy's ship. You have won the battle!", 'alert-success');
-                    $(hisBoard).off('click');
+                    $(hisBoard).off('click.gameTurn');
                     break;
                 case "KILL":
                     $(cell).addClass('board-hit');
@@ -146,7 +146,7 @@ function subscribe() {
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
                     markCellsAroundSunkShip(myBoard, data.coords.row, data.coords.col);
-                    $('#hisBoard').off('click');
+                    $('#hisBoard').off('click.gameTurn');
                     break;
                 case "KILL":
                     subscribe.errorCount = 0;
