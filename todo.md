@@ -1,5 +1,6 @@
 #### TODO:
 1. jQuery best practices
+1. Show enemy's fleet after the game's end
 1. Restore game state on client refresh
 1. fix concurrency bug in WaitingRoom
 1. Add chat to the game page
