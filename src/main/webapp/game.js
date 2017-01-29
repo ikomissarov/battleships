@@ -50,7 +50,7 @@ $(document).ready(function () {
 
         showMessage('OK!', 'alert-success');
 
-        $(myBoard).find('.board-cell').off('click');
+        $(myBoard).off('click');
         $(this).parent().slideUp('slow');
 
         $.post({
@@ -73,11 +73,11 @@ $(document).ready(function () {
         });
     });
 
-    $(myBoard).find('.board-cell').click(function () {
+    $(myBoard).on('click', '.board-cell', function () {
         $(this).toggleClass('board-ship');
     });
 
-    $(hisBoard).find('.board-cell').click(function () {
+    $(hisBoard).on('click', '.board-cell:not(.board-hit):not(.board-miss)', function () {
         if (blocked) return;
 
         //double click on cell to fire to avoid accidental fire
@@ -107,22 +107,22 @@ $(document).ready(function () {
                     markSunkShip(hisBoard, row, col);
                     markCellsAroundSunkShip(hisBoard, row, col);
                     showMessage("You have sunk enemy's ship. You have won the battle!", 'alert-success');
-                    $(hisBoard).find('.board-cell').off('click');
+                    $(hisBoard).off('click');
                     break;
                 case "KILL":
-                    $(cell).addClass('board-hit').off('click');
+                    $(cell).addClass('board-hit');
                     markSunkShip(hisBoard, row, col);
                     markCellsAroundSunkShip(hisBoard, row, col);
                     showMessage("You have sunk enemy's ship. Your turn.", 'alert-info');
                     blocked = false;
                     break;
                 case "HIT":
-                    $(cell).addClass('board-hit').off('click');
+                    $(cell).addClass('board-hit');
                     showMessage("You have hit enemy's ship. Your turn.", 'alert-info');
                     blocked = false;
                     break;
                 case "MISS":
-                    $(cell).addClass('board-miss').off('click');
+                    $(cell).addClass('board-miss');
                     showMessage("You have missed. Waiting for enemy's turn.", 'alert-warning');
                     subscribe();
                     break;
@@ -146,7 +146,7 @@ function subscribe() {
                     $(findCell(myBoard, data.coords.row, data.coords.col)).addClass('board-hit');
                     markSunkShip(myBoard, data.coords.row, data.coords.col);
                     markCellsAroundSunkShip(myBoard, data.coords.row, data.coords.col);
-                    $('#hisBoard').find('.board-cell').off('click');
+                    $('#hisBoard').off('click');
                     break;
                 case "KILL":
                     subscribe.errorCount = 0;
