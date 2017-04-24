@@ -33,6 +33,28 @@ $(document).ready(function () {
         }
     };
 
+    $.getJSON('game/state')
+        .done(function (state) {
+            if (state.myBoard) {
+                displayBoardState(myBoard, state.myBoard);
+
+                if (state.enemyBoard) {
+                    displayBoardState(hisBoard, state.enemyBoard);
+                    //hide ships that are not hit
+                    hisBoard.find('.board-ship').removeClass('board-ship');
+                }
+
+                $(myBoard).off('click.gameTurn');
+                $('#readyBtn').parent().hide();
+
+                showMessage("Waiting for enemy's turn.", 'alert-warning');
+                subscribe();
+            }
+        })
+        .fail(function (xhr, status) {
+            showMessage("Error: " + status, 'alert-danger');
+        });
+
     function onReadyToStart() {
         var coords = new Array(11);
         for (var i = 0; i < coords.length; i++) {
@@ -47,11 +69,11 @@ $(document).ready(function () {
         var ships = buildShips(coords);
         console.log(ships);
 
-        var errorText;
-        if (errorText = validate(ships, coords)) {
-            showMessage(errorText, 'alert-danger');
-            return;
-        }
+        // var errorText;
+        // if (errorText = validate(ships, coords)) {
+        //     showMessage(errorText, 'alert-danger');
+        //     return;
+        // }
 
         showMessage('OK!', 'alert-success');
 
@@ -190,6 +212,37 @@ $(document).ready(function () {
             .fail(function (xhr, status) {
                 showMessage("Error: " + status, 'alert-danger');
             });
+    }
+
+    function displayBoardState(boardElem, boardState) {
+        //display ships
+        boardState.ships.forEach(function (ship) {
+            ship.coords.forEach(function (coords) {
+                findCell(boardElem, coords.row, coords.col).addClass('board-ship');
+            });
+        });
+        //display hits
+        boardState.hits.forEach(function (coords) {
+            var cell = findCell(boardElem, coords.row, coords.col);
+            if (cell.hasClass('board-ship')) {
+                cell.addClass('board-hit');
+            } else {
+                cell.addClass('board-miss');
+            }
+        });
+        //mark killed ships
+        boardState.ships.forEach(function (ship) {
+            var killed = true;
+            ship.coords.forEach(function (coords) {
+                if (!findCell(boardElem, coords.row, coords.col).hasClass('board-hit')) {
+                    killed = false;
+                }
+            });
+            if (killed) {
+                markSunkShip(boardElem, ship.coords[0].row, ship.coords[0].col);
+                markCellsAroundSunkShip(boardElem, ship.coords[0].row, ship.coords[0].col);
+            }
+        });
     }
 
     function onMiss(board, row, col) {
