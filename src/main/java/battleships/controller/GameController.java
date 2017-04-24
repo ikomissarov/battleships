@@ -56,4 +56,9 @@ public class GameController {
         }
         return response;
     }
+
+    @RequestMapping(path = "/state", method = RequestMethod.GET)
+    public GameState getState(User user) {
+        return user.getGame().getState(user);
+    }
 }

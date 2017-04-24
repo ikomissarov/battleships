@@ -61,6 +61,10 @@ public class Game {
         }
     }
 
+    public GameState getState(User user) {
+        return new GameState(getMine(user).board, getOther(user).board);
+    }
+
     private static class Player {
         User user;
         BlockingQueue<Coords> queue = new LinkedBlockingQueue<>();

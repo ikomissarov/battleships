@@ -141,6 +141,7 @@ $(document).ready(function () {
                     case "OVER":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!", 'alert-danger');
                         onGameEnd(myBoard, data.coords.row, data.coords.col);
+                        displayEnemyFleet();
                         break;
                     case "KILL":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
@@ -175,6 +176,20 @@ $(document).ready(function () {
                         subscribe.onError();
                 }
             }).fail(subscribe.onError);
+    }
+
+    function displayEnemyFleet() {
+        $.getJSON('game/state')
+            .done(function (state) {
+                state.enemyBoard.ships.forEach(function (ship) {
+                    ship.coords.forEach(function (coords) {
+                        findCell(hisBoard, coords.row, coords.col).addClass('board-ship');
+                    });
+                });
+            })
+            .fail(function (xhr, status) {
+                showMessage("Error: " + status, 'alert-danger');
+            });
     }
 
     function onMiss(board, row, col) {
