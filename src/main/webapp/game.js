@@ -109,8 +109,7 @@ $(document).ready(function () {
             switch (data.type) {
                 case "OVER":
                     showMessage("You have sunk enemy's ship. You have won the battle!", 'alert-success');
-                    onKill(hisBoard, row, col);
-                    onGameEnd();
+                    onGameEnd(hisBoard, row, col);
                     break;
                 case "KILL":
                     showMessage("You have sunk enemy's ship. Your turn.", 'alert-info');
@@ -141,8 +140,7 @@ $(document).ready(function () {
                 switch (data.type) {
                     case "OVER":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!", 'alert-danger');
-                        onKill(myBoard, data.coords.row, data.coords.col);
-                        onGameEnd();
+                        onGameEnd(myBoard, data.coords.row, data.coords.col);
                         break;
                     case "KILL":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
@@ -193,7 +191,8 @@ $(document).ready(function () {
         markCellsAroundSunkShip(board, row, col);
     }
 
-    function onGameEnd() {
+    function onGameEnd(board, row, col) {
+        onKill(board, row, col);
         $(hisBoard).off('click.gameTurn');
     }
 
