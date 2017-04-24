@@ -10,15 +10,15 @@ public class WaitingRoom {
     private User waitingUser;
 
     public synchronized void startChat(User user) {
-        if (waitingUser != null) {
+        if (waitingUser != null && waitingUser != user) {
             Chat chat = new Chat(waitingUser, user);
             Game game = new Game(waitingUser, user);
             user.setChat(chat);
             user.setGame(game);
             waitingUser.setChat(chat);
             waitingUser.setGame(game);
-            //todo error prone, rework
-            notify();
+            waitingUser = null;
+            notifyAll();
         } else {
             waitingUser = user;
             try {

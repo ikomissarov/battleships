@@ -21,8 +21,11 @@ public class InitController {
 
     @RequestMapping(path = "/init", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String init(HttpSession session, @RequestParam String name) {
-        User user = new User(session.getId(), name);
-        session.setAttribute("user", user);
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User(session.getId(), name);
+            session.setAttribute("user", user);
+        }
         logger.info("Session is new: {}. {}.", session.isNew(), user);
 
         waitingRoom.startChat(user);
