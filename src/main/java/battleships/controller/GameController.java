@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author Igor
  */
@@ -21,9 +23,9 @@ public class GameController {
     public GameReadyResponse ready(User user, @RequestBody Board board) {
         logger.debug("board: {}", board);
         if (user.getGame().placeShips(user, board.getShips()))
-            return new GameReadyResponse(GameReadyResponse.Type.NOT_READY);
-        else
             return new GameReadyResponse(GameReadyResponse.Type.READY);
+        else
+            return new GameReadyResponse(GameReadyResponse.Type.NOT_READY);
     }
 
     @RequestMapping(path = "/fire", method = RequestMethod.POST)
@@ -60,5 +62,10 @@ public class GameController {
     @RequestMapping(path = "/state", method = RequestMethod.GET)
     public GameState getState(User user) {
         return user.getGame().getState(user);
+    }
+
+    @ModelAttribute
+    public void setNoCacheResponseHeader(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     }
 }

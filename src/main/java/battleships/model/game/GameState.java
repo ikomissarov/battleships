@@ -6,14 +6,16 @@ package battleships.model.game;
 public class GameState {
     private Board myBoard;
     private Board enemyBoard;
+    private boolean isMyTurn;
 
     public GameState() {
         //need default constructor for deserialization
     }
 
-    public GameState(Board myBoard, Board enemyBoard) {
+    public GameState(Board myBoard, Board enemyBoard, boolean isMyTurn) {
         this.myBoard = myBoard;
         this.enemyBoard = enemyBoard;
+        this.isMyTurn = isMyTurn;
     }
 
     public Board getMyBoard() {
@@ -24,11 +26,16 @@ public class GameState {
         return enemyBoard;
     }
 
+    public boolean isMyTurn() {
+        return isMyTurn;
+    }
+
     @Override
     public String toString() {
         return "GameState{" +
                 "myBoard=" + myBoard +
                 ", enemyBoard=" + enemyBoard +
+                ", isMyTurn=" + isMyTurn +
                 '}';
     }
 }

@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class Game {
     private Player first = new Player();
     private Player second = new Player();
+    private Player whoMakesNextTurn;
 
     public Game(User firstUser, User secondUser) {
         first.user = firstUser;
@@ -22,7 +23,10 @@ public class Game {
 
     public synchronized boolean placeShips(User user, Set<Ship> ships) {
         getMine(user).board = new Board(ships);
-        return getOther(user).board == null;
+        boolean otherIsReady = getOther(user).board != null;
+        if (otherIsReady) whoMakesNextTurn = getMine(user);
+        else whoMakesNextTurn = getOther(user);
+        return otherIsReady;
     }
 
     private Player getMine(User user) {
@@ -41,7 +45,17 @@ public class Game {
         if (!getMine(user).queue.offer(coords, Constants.TIMEOUT, TimeUnit.SECONDS)) {
             throw new RuntimeException("Unable to send a message, try again.");
         }
-        return new GameFireResponse(getOther(user).board.fireAt(coords));
+        GameFireResponse response = new GameFireResponse(getOther(user).board.fireAt(coords));
+        if (response.getType() == FireResult.OVER) {
+            whoMakesNextTurn = null;
+        } else if (response.getType() == FireResult.KILL || response.getType() == FireResult.HIT) {
+            whoMakesNextTurn = getMine(user);
+        } else if (response.getType() == FireResult.MISS) {
+            whoMakesNextTurn = getOther(user);
+        } else {
+            throw new RuntimeException("Should not have ever got here!");
+        }
+        return response;
     }
 
     public GameSubscribeResponse receiveTurn(User user) throws InterruptedException {
@@ -62,7 +76,7 @@ public class Game {
     }
 
     public GameState getState(User user) {
-        return new GameState(getMine(user).board, getOther(user).board);
+        return new GameState(getMine(user).board, getOther(user).board, getMine(user) == whoMakesNextTurn);
     }
 
     private static class Player {

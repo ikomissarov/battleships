@@ -41,14 +41,12 @@ $(document).ready(function () {
                 if (state.enemyBoard) {
                     displayBoardState(hisBoard, state.enemyBoard);
                     //hide ships that are not hit
-                    hisBoard.find('.board-ship').removeClass('board-ship');
+                    $(hisBoard).find('.board-ship').removeClass('board-ship');
                 }
 
-                $(myBoard).off('click.gameTurn');
-                $('#readyBtn').parent().hide();
+                onGameStart();
 
-                showMessage("Waiting for enemy's turn.", 'alert-warning');
-                subscribe();
+                determineWhichTurn(state);
             }
         })
         .fail(function (xhr, status) {
@@ -69,16 +67,15 @@ $(document).ready(function () {
         var ships = buildShips(coords);
         console.log(ships);
 
-        // var errorText;
-        // if (errorText = validate(ships, coords)) {
-        //     showMessage(errorText, 'alert-danger');
-        //     return;
-        // }
+        var errorText;
+        if (errorText = validate(ships, coords)) {
+            showMessage(errorText, 'alert-danger');
+            return;
+        }
 
         showMessage('OK!', 'alert-success');
 
-        $(myBoard).off('click.gameTurn');
-        $(this).parent().slideUp('slow');
+        onGameStart();
 
         $.post({
             url: 'game/ready',
@@ -131,7 +128,8 @@ $(document).ready(function () {
             switch (data.type) {
                 case "OVER":
                     showMessage("You have sunk enemy's ship. You have won the battle!", 'alert-success');
-                    onGameEnd(hisBoard, row, col);
+                    onKill(hisBoard, row, col);
+                    onGameEnd();
                     break;
                 case "KILL":
                     showMessage("You have sunk enemy's ship. Your turn.", 'alert-info');
@@ -162,7 +160,8 @@ $(document).ready(function () {
                 switch (data.type) {
                     case "OVER":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. You have lost the battle!", 'alert-danger');
-                        onGameEnd(myBoard, data.coords.row, data.coords.col);
+                        onKill(myBoard, data.coords.row, data.coords.col);
+                        onGameEnd();
                         displayEnemyFleet();
                         break;
                     case "KILL":
@@ -245,6 +244,26 @@ $(document).ready(function () {
         });
     }
 
+    function determineWhichTurn(state) {
+        if (!state.enemyBoard) {
+            showMessage("Waiting for enemy's fleet to arrive.", 'alert-warning');
+            subscribe();
+        } else if ($(hisBoard).find('.board-kill').length === 20) {
+            showMessage("You have won the battle!", 'alert-success');
+            onGameEnd();
+        } else if ($(myBoard).find('.board-kill').length === 20) {
+            showMessage("You have lost the battle!", 'alert-danger');
+            onGameEnd();
+            displayEnemyFleet();
+        } else if (state.myTurn) {
+            showMessage("Your turn.", 'alert-info');
+            blocked = false;
+        } else {
+            showMessage("Waiting for enemy's turn.", 'alert-warning');
+            subscribe();
+        }
+    }
+
     function onMiss(board, row, col) {
         $(findCell(board, row, col)).addClass('board-miss');
     }
@@ -259,8 +278,12 @@ $(document).ready(function () {
         markCellsAroundSunkShip(board, row, col);
     }
 
-    function onGameEnd(board, row, col) {
-        onKill(board, row, col);
+    function onGameStart() {
+        $(myBoard).off('click.gameTurn');
+        $('#readyBtn').parent().slideUp('slow');
+    }
+
+    function onGameEnd() {
         $(hisBoard).off('click.gameTurn');
     }
 

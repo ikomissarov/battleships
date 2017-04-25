@@ -9,6 +9,7 @@ import java.util.Set;
 public class Board {
     private Set<Ship> ships = new HashSet<>();
     private Set<Coords> hits = new HashSet<>();
+    private Coords lastHit;
 
     public Board() {
         //need default constructor for deserialization
@@ -26,8 +27,13 @@ public class Board {
         return hits;
     }
 
+    public Coords getLastHit() {
+        return lastHit;
+    }
+
     public FireResult fireAt(Coords coords) {
         hits.add(coords);
+        lastHit = coords;
         return resultFor(coords);
     }
 
@@ -66,6 +72,7 @@ public class Board {
         return "Board{" +
                 "ships=" + ships +
                 ", hits=" + hits +
+                ", lastHit=" + lastHit +
                 '}';
     }
 }
