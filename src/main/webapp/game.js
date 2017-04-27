@@ -35,6 +35,11 @@ $(document).ready(function () {
 
     $.getJSON('game/state')
         .done(function (state) {
+            if (state.type === "REDIRECT") {
+                window.open(state.text, "_self");
+                return;
+            }
+
             if (state.myBoard) {
                 displayBoardState(myBoard, state.myBoard);
 
