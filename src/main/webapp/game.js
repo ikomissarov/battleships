@@ -85,7 +85,7 @@ $(document).ready(function () {
             switch (data.type) {
                 case "READY":
                     showMessage("Enemy is ready. Start the battle!", 'alert-info');
-                    blocked = false;
+                    unblock();
                     break;
                 case "NOT_READY":
                     showMessage("Waiting for enemy's fleet to arrive.", 'alert-warning');
@@ -102,7 +102,7 @@ $(document).ready(function () {
     }
 
     function onHisBoardClick() {
-        if (blocked) return;
+        if (isBlocked()) return;
 
         //double click on cell to fire to avoid accidental fire
         if (!$(this).hasClass('board-fire')) {
@@ -111,7 +111,7 @@ $(document).ready(function () {
             return;
         }
 
-        blocked = true;
+        block();
         var cell = this;
         var col = $(cell).index();
         var row = $(cell).closest('tr').index();
@@ -134,12 +134,12 @@ $(document).ready(function () {
                 case "KILL":
                     showMessage("You have sunk enemy's ship. Your turn.", 'alert-info');
                     onKill(hisBoard, row, col);
-                    blocked = false;
+                    unblock();
                     break;
                 case "HIT":
                     showMessage("You have hit enemy's ship. Your turn.", 'alert-info');
                     onHit(hisBoard, row, col);
-                    blocked = false;
+                    unblock();
                     break;
                 case "MISS":
                     showMessage("You have missed. Waiting for enemy's turn.", 'alert-warning');
@@ -155,6 +155,7 @@ $(document).ready(function () {
     }
 
     function subscribe() {
+        block();
         $.getJSON('game/subscribe')
             .done(function (data) {
                 switch (data.type) {
@@ -180,7 +181,7 @@ $(document).ready(function () {
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.", 'alert-info');
                         onMiss(myBoard, data.coords.row, data.coords.col);
                         subscribe.errorCount = 0;
-                        blocked = false;
+                        unblock();
                         break;
                     case "EMPTY":
                         subscribe.errorCount = 0;
@@ -257,7 +258,7 @@ $(document).ready(function () {
             displayEnemyFleet();
         } else if (state.myTurn) {
             showMessage("Your turn.", 'alert-info');
-            blocked = false;
+            unblock();
         } else {
             showMessage("Waiting for enemy's turn.", 'alert-warning');
             subscribe();
@@ -285,6 +286,7 @@ $(document).ready(function () {
 
     function onGameEnd() {
         $(hisBoard).off('click.gameTurn');
+        unblock();
     }
 
     function buildShips(coords) {
@@ -396,6 +398,20 @@ $(document).ready(function () {
             markCellsAroundSunkShip(board, row + 1, col - 1);
             markCellsAroundSunkShip(board, row, col - 1);
         }
+    }
+
+    function block() {
+        blocked = true;
+        $(hisBoard).parent().find('.loading').show('fast');
+    }
+
+    function unblock() {
+        blocked = false;
+        $(hisBoard).parent().find('.loading').hide();
+    }
+
+    function isBlocked() {
+        return blocked;
     }
 
     function findCell(board, row, col) {
