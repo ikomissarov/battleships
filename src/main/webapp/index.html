@@ -75,7 +75,8 @@
                   .done(function (enemyName) {
                       if (enemyName) {
                           $('#loading').hide();
-                          window.localStorage.setItem('enemyName', enemyName);
+                          window.sessionStorage.setItem('enemyName', enemyName);
+                          window.sessionStorage.setItem('myName', $('#nameInput').val());
                           window.open('game.html', '_self');
                       } else {
                           send(data);
@@ -87,6 +88,12 @@
                       window.alert("<b>Error:</b> " + xhr.status + " - " + xhr.statusText);
                   });
           }
+
+          var myName = window.sessionStorage.getItem('myName');
+          if (myName) {
+              $('#nameInput').val(myName);
+              $('#mainForm').submit();
+          }
       });
   </script>
 </head>
@@ -94,7 +101,7 @@
 
 <div class="container" style="padding: 10px">
   <form id="mainForm">
-    <label>Enter your name: <input type="text" name="name"/></label>
+    <label>Enter your name: <input id="nameInput" type="text" name="name"/></label>
     <input type="submit" value="Start the game"/>
   </form>
 </div>

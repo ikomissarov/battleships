@@ -17,7 +17,7 @@ $(document).ready(function () {
     fillTable(myBoard);
     fillTable(hisBoard);
 
-    $('.enemyName').text(window.localStorage.getItem('enemyName'));
+    $('.enemyName').text(window.sessionStorage.getItem('enemyName'));
 
     $('#readyBtn').click(onReadyToStart);
 
