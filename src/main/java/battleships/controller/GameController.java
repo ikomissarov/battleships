@@ -21,7 +21,7 @@ public class GameController {
 
     @RequestMapping(path = "/ready", method = RequestMethod.POST)
     public GameReadyResponse ready(User user, @RequestBody Board board) {
-        logger.debug("board: {}", board);
+        logger.debug("{} board: {}", user.getName(), board);
         if (user.getGame().placeShips(user, board.getShips()))
             return new GameReadyResponse(GameReadyResponse.Type.READY);
         else
@@ -30,7 +30,7 @@ public class GameController {
 
     @RequestMapping(path = "/fire", method = RequestMethod.POST)
     public GameFireResponse fire(User user, @RequestBody Coords coords) {
-        logger.debug("make turn: {}", coords);
+        logger.debug("{} make turn: {}", user.getName(), coords);
 
         GameFireResponse response;
         try {
@@ -49,7 +49,7 @@ public class GameController {
         GameSubscribeResponse response;
         try {
             response = user.getGame().receiveTurn(user);
-            logger.debug("receive turn: [{}]", response.getCoords());
+            logger.debug("{} receive turn: [{}]", user.getName(), response.getCoords());
         } catch (NullPointerException e) {
             response = new GameSubscribeResponse(CommonResponse.Type.QUIT);
         } catch (Exception e) {
