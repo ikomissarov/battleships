@@ -7,23 +7,23 @@ import battleships.model.ResponseType;
  * @author Igor
  */
 public class ChatResponse extends CommonResponse {
-    private String userName;
+    private ChatMessage message;
 
     public ChatResponse(ResponseType type) {
-        this(type, null);
+        super(type);
     }
 
     public ChatResponse(ResponseType type, String text) {
-        this(type, text, null);
-    }
-
-    public ChatResponse(ResponseType type, String text, String userName) {
         super(type, text);
-        this.userName = userName;
     }
 
-    public String getUserName() {
-        return userName;
+    public ChatResponse(ChatMessage message) {
+        super(Type.MSG);
+        this.message = message;
+    }
+
+    public ChatMessage getMessage() {
+        return message;
     }
 
     public enum Type implements ResponseType {

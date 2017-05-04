@@ -13,19 +13,20 @@ import java.util.concurrent.TimeUnit;
  * @author Igor
  */
 public class Chat {
-    private Map.Entry<User, BlockingQueue<String>> first;
-    private Map.Entry<User, BlockingQueue<String>> second;
+    private Map.Entry<User, BlockingQueue<ChatMessage>> first;
+    private Map.Entry<User, BlockingQueue<ChatMessage>> second;
+    private ChatHistory history = new ChatHistory();
 
     public Chat(User firstUser, User secondUser) {
         first = new AbstractMap.SimpleEntry<>(firstUser, new LinkedBlockingQueue<>());
         second = new AbstractMap.SimpleEntry<>(secondUser, new LinkedBlockingQueue<>());
     }
 
-    private BlockingQueue<String> getMine(User user) {
+    private BlockingQueue<ChatMessage> getMine(User user) {
         return user.equals(first.getKey()) ? first.getValue() : second.getValue();
     }
 
-    private BlockingQueue<String> getOther(User user) {
+    private BlockingQueue<ChatMessage> getOther(User user) {
         return user.equals(first.getKey()) ? second.getValue() : first.getValue();
     }
 
@@ -33,12 +34,17 @@ public class Chat {
         return user.equals(first.getKey()) ? second.getKey() : first.getKey();
     }
 
-    public boolean sendMessage(User user, String msg) throws InterruptedException {
+    public boolean sendMessage(User user, ChatMessage msg) throws InterruptedException {
+        history.addMessage(msg);
         return getMine(user).offer(msg, Constants.TIMEOUT, TimeUnit.SECONDS);
     }
 
-    public String getMessage(User user) throws InterruptedException {
+    public ChatMessage getMessage(User user) throws InterruptedException {
         return getOther(user).poll(Constants.TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    public ChatHistory getHistory() {
+        return history;
     }
 
     public void leaveChat(User user) throws InterruptedException {

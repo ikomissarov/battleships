@@ -36,7 +36,24 @@ $(document).ready(function () {
             showError("Disconnected from chat.");
         }
     };
-    subscribe();
+
+    $.getJSON('chat/state')
+        .done(function (state) {
+            if (state.messages) {
+                var myName = window.sessionStorage.getItem('myName');
+                state.messages.forEach(function (message) {
+                    if (message.username === myName) {
+                        showMessage(message, myMsgProtoElem);
+                    } else {
+                        showMessage(message, hisMsgProtoElem);
+                    }
+                });
+            }
+            subscribe();
+        })
+        .fail(function (xhr, status) {
+            showError("<b>Error:</b> " + status);
+        });
 
     function subscribe() {
         $.getJSON('chat/subscribe')
@@ -44,7 +61,7 @@ $(document).ready(function () {
                 switch (data.type) {
                     case "MSG":
                         subscribe.errorCount = 0;
-                        showMessage(data.userName, data.text, hisMsgProtoElem);
+                        showMessage(data.message, hisMsgProtoElem);
                         subscribe();
                         break;
                     case "NO_MSG":
@@ -52,7 +69,7 @@ $(document).ready(function () {
                         subscribe();
                         break;
                     case "QUIT":
-                        showError(data.userName + " left the chat.");
+                        showError(window.sessionStorage.getItem('enemyName') + " left the chat.");
                         break;
                     case "REDIRECT":
                         window.open(data.text, "_self");
@@ -73,7 +90,7 @@ $(document).ready(function () {
         }).done(function (data) {
             switch (data.type) {
                 case "MSG":
-                    showMessage(data.userName, data.text, myMsgProtoElem);
+                    showMessage(data.message, myMsgProtoElem);
                     break;
                 case "REDIRECT":
                     window.open(data.text, "_self");
@@ -84,11 +101,11 @@ $(document).ready(function () {
         });
     }
 
-    function showMessage(nickname, message, protoElem) {
+    function showMessage(message, protoElem) {
         var newElem = protoElem.clone();
-        newElem.find('.nickname').text(nickname);
-        newElem.find('.text').text(message);
-        newElem.find('.time').append(timeNow());
+        newElem.find('.nickname').text(message.username);
+        newElem.find('.text').text(message.text);
+        newElem.find('.time').append(getTime(message.timestamp));
         $('#chat-body').append(newElem);
     }
 
@@ -97,8 +114,8 @@ $(document).ready(function () {
         $('#chat-body').append(errorElem);
     }
 
-    function timeNow() {
-        var d = new Date();
+    function getTime(timestamp) {
+        var d = new Date(timestamp);
         var h = (d.getHours() < 10 ? '0' : '') + d.getHours();
         var m = (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
         return h + ':' + m;
