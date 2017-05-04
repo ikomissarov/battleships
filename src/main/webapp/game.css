@@ -74,21 +74,28 @@ td.board-fire:hover {
     background-color: #3bff1c;
 }
 
-.panel-body {
+#game .panel-body {
     padding: 5px;
     position: relative;
 }
 
-.panel-heading, .panel-footer {
+#game .panel-heading, #game .panel-footer {
     text-align: center;
 }
 
-#new-game {
+.nav-link {
     position: fixed;
     top: 15px;
-    right: 15px;
     color: #777;
     text-decoration: underline;
+}
+
+#new-game {
+    right: 15px;
+}
+
+#open-chat {
+    right: 100px;
 }
 
 .loading {

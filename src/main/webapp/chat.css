@@ -1,11 +1,46 @@
-.red {
+.error {
     color: #ff0e10;
 }
 
-.green {
-    color: #0eff20;
+#chat {
+    position: fixed;
+    top: 50px;
+    bottom: 50px;
+    right: 10px;
+    width: 300px;
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
 }
 
-.blue {
-    color: #155eff;
+#chat .panel-body {
+    flex: auto;
+    overflow-y: auto;
+}
+
+.chat {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat .message {
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+}
+
+/*this is used to hide first 2 messages that are always present and used as prototypes for creating new messages in JS*/
+.chat .message:nth-child(-n+2) {
+    display: none;
+}
+
+.chat .message .text {
+    margin: 0;
+    color: #777777;
+}
+
+.chat .glyphicon {
+    margin-right: 5px;
 }
