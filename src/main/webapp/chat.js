@@ -3,8 +3,11 @@ $(document).ready(function () {
     var myMsgProtoElem = $('.chat .message:nth-child(1)');
     var hisMsgProtoElem = $('.chat .message:nth-child(2)');
 
+    var chatBadge = $('#chat-badge');
+
     $('#open-chat').click(function () {
         $('#chat').show('fast');
+        chatBadge.text(0).hide();
         return false;
     });
 
@@ -62,6 +65,7 @@ $(document).ready(function () {
                     case "MSG":
                         subscribe.errorCount = 0;
                         showMessage(data.message, hisMsgProtoElem);
+                        onMessageReceived();
                         subscribe();
                         break;
                     case "NO_MSG":
@@ -99,6 +103,12 @@ $(document).ready(function () {
                     showError("<b>Error:</b> " + data.text);
             }
         });
+    }
+
+    function onMessageReceived() {
+        if (!$('#chat').is(':visible')) {
+            chatBadge.text(+chatBadge.text() + 1).show();
+        }
     }
 
     function showMessage(message, protoElem) {
