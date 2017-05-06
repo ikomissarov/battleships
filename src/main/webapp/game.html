@@ -24,7 +24,7 @@
   <div class="panel-heading">
     <span class="glyphicon glyphicon-comment"></span> Chat
     <div class="btn-group pull-right">
-      <button id="close-chat" type="button" class="close"><span>&times;</span></button>
+      <button id="close-chat" class="close"><span>&times;</span></button>
     </div>
   </div>
 
@@ -78,7 +78,7 @@
         <div class="panel-body">
           <div class="loading" style="display: none">
             <div class="spinner">
-              <img src="images/loading.gif"/>
+              <img src="media/loading.gif"/>
             </div>
           </div>
           <table id="hisBoard" class="board">
@@ -93,5 +93,9 @@
   <p id="status" class="navbar-text">You are playing with <strong class="enemyName"></strong>.
     Place your ships and push <strong>Ready</strong> button.</p>
 </nav>
+
+<audio id="msgSound">
+  <source src="media/incoming-msg.mp3" type="audio/mpeg">
+</audio>
 </body>
 </html>

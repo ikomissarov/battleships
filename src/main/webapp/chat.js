@@ -108,6 +108,7 @@ $(document).ready(function () {
     }
 
     function onMessageReceived() {
+        $('#msgSound').trigger('play');
         if (!chat.is(':visible')) {
             chatBadge.text(+chatBadge.text() + 1).show();
         }
