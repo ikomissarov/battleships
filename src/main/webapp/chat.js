@@ -1,18 +1,20 @@
 $(document).ready(function () {
 
-    var myMsgProtoElem = $('.chat .message:nth-child(1)');
-    var hisMsgProtoElem = $('.chat .message:nth-child(2)');
-
+    var chat = $('#chat');
+    var chatBody = $('#chat-body');
     var chatBadge = $('#chat-badge');
 
+    var myMsgProtoElem = chatBody.find('.message:nth-child(1)');
+    var hisMsgProtoElem = chatBody.find('.message:nth-child(2)');
+
     $('#open-chat').click(function () {
-        $('#chat').show('fast');
+        chat.show('fast');
         chatBadge.text(0).hide();
         return false;
     });
 
     $('#close-chat').click(function () {
-        $('#chat').hide('fast');
+        chat.hide('fast');
     });
 
     $('#chat-send').click(function () {
@@ -106,7 +108,7 @@ $(document).ready(function () {
     }
 
     function onMessageReceived() {
-        if (!$('#chat').is(':visible')) {
+        if (!chat.is(':visible')) {
             chatBadge.text(+chatBadge.text() + 1).show();
         }
     }
@@ -116,12 +118,12 @@ $(document).ready(function () {
         newElem.find('.nickname').text(message.username);
         newElem.find('.text').text(message.text);
         newElem.find('.time').append(getTime(message.timestamp));
-        $('#chat-body').append(newElem);
+        chatBody.append(newElem);
     }
 
     function showError(message) {
         var errorElem = $('<li></li>').html(message).addClass('error');
-        $('#chat-body').append(errorElem);
+        chatBody.append(errorElem);
     }
 
     function getTime(timestamp) {
