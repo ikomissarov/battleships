@@ -1,6 +1,8 @@
 package battleships.model.game;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -8,8 +10,7 @@ import java.util.Set;
  */
 public class Board {
     private Set<Ship> ships = new HashSet<>();
-    private Set<Coords> hits = new HashSet<>();
-    private Coords lastHit;
+    private List<Coords> hits = new ArrayList<>();
 
     public Board() {
         //need default constructor for deserialization
@@ -23,17 +24,16 @@ public class Board {
         return ships;
     }
 
-    public Set<Coords> getHits() {
+    public List<Coords> getHits() {
         return hits;
     }
 
-    public Coords getLastHit() {
-        return lastHit;
+    public Coords getHit(int index) {
+        return hits.size() > index ? hits.get(index) : null;
     }
 
     public FireResult fireAt(Coords coords) {
         hits.add(coords);
-        lastHit = coords;
         return resultFor(coords);
     }
 
@@ -72,7 +72,6 @@ public class Board {
         return "Board{" +
                 "ships=" + ships +
                 ", hits=" + hits +
-                ", lastHit=" + lastHit +
                 '}';
     }
 }

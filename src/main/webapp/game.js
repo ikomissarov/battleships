@@ -25,6 +25,7 @@ $(document).ready(function () {
     $(hisBoard).on('click.gameTurn', '.board-cell:not(.board-hit):not(.board-miss)', onHisBoardClick);
 
     subscribe.errorCount = 0;
+    subscribe.enemyFireCount = 0;
     subscribe.onError = function () {
         if (++subscribe.errorCount <= 10) {
             setTimeout(subscribe, 1000);
@@ -42,6 +43,7 @@ $(document).ready(function () {
 
             if (state.myBoard) {
                 displayBoardState(myBoard, state.myBoard);
+                subscribe.enemyFireCount = state.myBoard.hits.length;
 
                 if (state.enemyBoard) {
                     displayBoardState(hisBoard, state.enemyBoard);
@@ -161,7 +163,7 @@ $(document).ready(function () {
 
     function subscribe() {
         block();
-        $.getJSON('game/subscribe')
+        $.getJSON('game/subscribe?index=' + subscribe.enemyFireCount)
             .done(function (data) {
                 switch (data.type) {
                     case "OVER":
@@ -174,18 +176,21 @@ $(document).ready(function () {
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
                         onKill(myBoard, data.coords.row, data.coords.col);
                         subscribe.errorCount = 0;
+                        subscribe.enemyFireCount++;
                         subscribe();
                         break;
                     case "HIT":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Waiting for enemy's turn.", 'alert-warning');
                         onHit(myBoard, data.coords.row, data.coords.col);
                         subscribe.errorCount = 0;
+                        subscribe.enemyFireCount++;
                         subscribe();
                         break;
                     case "MISS":
                         showMessage("Enemy has fired to <b>" + data.coords.row + LETTERS[data.coords.col] + "</b>. Your turn.", 'alert-info');
                         onMiss(myBoard, data.coords.row, data.coords.col);
                         subscribe.errorCount = 0;
+                        subscribe.enemyFireCount++;
                         unblock();
                         break;
                     case "EMPTY":

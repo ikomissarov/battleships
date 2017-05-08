@@ -58,8 +58,17 @@ public class Game {
         return response;
     }
 
-    public GameSubscribeResponse receiveTurn(User user) throws InterruptedException {
-        Coords coords = getOther(user).queue.poll(Constants.TIMEOUT, TimeUnit.SECONDS);
+    public GameSubscribeResponse receiveTurn(User user, int index) throws InterruptedException {
+        //first, check maybe the required turn has already been made
+        Coords coords = getMine(user).board.getHit(index);
+        if (coords == null) {
+            //if no, wait on a queue for a turn to be made
+            coords = getOther(user).queue.poll(Constants.TIMEOUT, TimeUnit.SECONDS);
+        }
+        if (coords == null) {
+            //if still no, then check again, maybe it was made while we were waiting on a queue and consumed by other thread
+            coords = getMine(user).board.getHit(index);
+        }
         if (coords == null) {
             return new GameSubscribeResponse(GameSubscribeResponse.Type.EMPTY);
         } else {

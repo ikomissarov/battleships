@@ -45,11 +45,11 @@ public class GameController {
     }
 
     @RequestMapping(path = "/subscribe", method = RequestMethod.GET)
-    public GameSubscribeResponse subscribe(User user) {
+    public GameSubscribeResponse subscribe(User user, @RequestParam int index) {
         GameSubscribeResponse response;
         try {
-            response = user.getGame().receiveTurn(user);
-            logger.debug("{} receive turn: [{}]", user.getName(), response.getCoords());
+            response = user.getGame().receiveTurn(user, index);
+            logger.debug("{} receive turn #{}: [{}]", user.getName(), index, response.getCoords());
         } catch (NullPointerException e) {
             response = new GameSubscribeResponse(CommonResponse.Type.QUIT);
         } catch (Exception e) {
