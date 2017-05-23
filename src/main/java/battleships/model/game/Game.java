@@ -4,17 +4,14 @@ import battleships.model.Constants;
 import battleships.model.User;
 
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Igor
  */
 public class Game {
-    private Player first = new Player();
-    private Player second = new Player();
-    private Player whoMakesNextTurn;
+    private final Player first = new Player();
+    private final Player second = new Player();
+    private volatile Player whoMakesNextTurn;
 
     public Game(User firstUser, User secondUser) {
         first.user = firstUser;
@@ -42,10 +39,12 @@ public class Game {
     }
 
     public GameFireResponse makeTurn(User user, Coords coords) throws InterruptedException {
-        if (!getMine(user).queue.offer(coords, Constants.TIMEOUT, TimeUnit.SECONDS)) {
-            throw new RuntimeException("Unable to send a message, try again.");
+        GameFireResponse response;
+        synchronized (getOther(user)) {
+            response = new GameFireResponse(getOther(user).board.fireAt(coords));
+            getOther(user).notifyAll();
         }
-        GameFireResponse response = new GameFireResponse(getOther(user).board.fireAt(coords));
+
         if (response.getType() == FireResult.OVER) {
             whoMakesNextTurn = null;
         } else if (response.getType() == FireResult.KILL || response.getType() == FireResult.HIT) {
@@ -59,16 +58,15 @@ public class Game {
     }
 
     public GameSubscribeResponse receiveTurn(User user, int index) throws InterruptedException {
-        //first, check maybe the required turn has already been made
-        Coords coords = getMine(user).board.getHit(index);
-        if (coords == null) {
-            //if no, wait on a queue for a turn to be made
-            coords = getOther(user).queue.poll(Constants.TIMEOUT, TimeUnit.SECONDS);
-        }
-        if (coords == null) {
-            //if still no, then check again, maybe it was made while we were waiting on a queue and consumed by other thread
+        Coords coords;
+        synchronized (getMine(user)) {
             coords = getMine(user).board.getHit(index);
+            if (coords == null) {
+                getMine(user).wait(Constants.TIMEOUT * 1000);
+                coords = getMine(user).board.getHit(index);
+            }
         }
+
         if (coords == null) {
             return new GameSubscribeResponse(GameSubscribeResponse.Type.EMPTY);
         } else {
@@ -78,9 +76,9 @@ public class Game {
 
     public void leaveGame(User user) throws InterruptedException {
         if (user.equals(first.user)) {
-            first.queue = null;
+            first.board = null;
         } else {
-            second.queue = null;
+            second.board = null;
         }
     }
 
@@ -90,7 +88,6 @@ public class Game {
 
     private static class Player {
         User user;
-        BlockingQueue<Coords> queue = new LinkedBlockingQueue<>();
         Board board;
     }
 }
