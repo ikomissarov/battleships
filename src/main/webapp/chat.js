@@ -52,6 +52,7 @@ $(document).ready(function () {
                         showMessage(message, myMsgProtoElem);
                     } else {
                         showMessage(message, hisMsgProtoElem);
+                        subscribe.incomingMsgCount++;
                     }
                 });
             }
