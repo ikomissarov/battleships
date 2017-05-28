@@ -1,19 +1,24 @@
 package battleships.model.chat;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Igor
  */
 public class ChatHistory {
-    private Queue<ChatMessage> messages = new ConcurrentLinkedQueue<>();
+    private Set<ChatMessage> messages = new TreeSet<>();
 
-    public void addMessage(ChatMessage message) {
-        messages.add(message);
+    public ChatHistory() {
     }
 
-    public Queue<ChatMessage> getMessages() {
+    public ChatHistory(Collection<ChatMessage> firstMessages, Collection<ChatMessage> secondMessages) {
+        messages.addAll(firstMessages);
+        messages.addAll(secondMessages);
+    }
+
+    public Set<ChatMessage> getMessages() {
         return messages;
     }
 

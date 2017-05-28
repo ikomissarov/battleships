@@ -4,29 +4,27 @@ import battleships.model.Constants;
 import battleships.model.User;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Igor
  */
 public class Chat {
-    private Map.Entry<User, BlockingQueue<ChatMessage>> first;
-    private Map.Entry<User, BlockingQueue<ChatMessage>> second;
-    private ChatHistory history = new ChatHistory();
+    private Map.Entry<User, List<ChatMessage>> first;
+    private Map.Entry<User, List<ChatMessage>> second;
 
     public Chat(User firstUser, User secondUser) {
-        first = new AbstractMap.SimpleEntry<>(firstUser, new LinkedBlockingQueue<>());
-        second = new AbstractMap.SimpleEntry<>(secondUser, new LinkedBlockingQueue<>());
+        first = new AbstractMap.SimpleEntry<>(firstUser, new ArrayList<>());
+        second = new AbstractMap.SimpleEntry<>(secondUser, new ArrayList<>());
     }
 
-    private BlockingQueue<ChatMessage> getMine(User user) {
+    private List<ChatMessage> getMine(User user) {
         return user.equals(first.getKey()) ? first.getValue() : second.getValue();
     }
 
-    private BlockingQueue<ChatMessage> getOther(User user) {
+    private List<ChatMessage> getOther(User user) {
         return user.equals(first.getKey()) ? second.getValue() : first.getValue();
     }
 
@@ -34,17 +32,27 @@ public class Chat {
         return user.equals(first.getKey()) ? second.getKey() : first.getKey();
     }
 
-    public boolean sendMessage(User user, ChatMessage msg) throws InterruptedException {
-        history.addMessage(msg);
-        return getMine(user).offer(msg, Constants.TIMEOUT, TimeUnit.SECONDS);
+    public void sendMessage(User user, ChatMessage msg) throws InterruptedException {
+        synchronized (getMine(user)) {
+            getMine(user).add(msg);
+            getMine(user).notifyAll();
+        }
     }
 
-    public ChatMessage getMessage(User user) throws InterruptedException {
-        return getOther(user).poll(Constants.TIMEOUT, TimeUnit.SECONDS);
+    public ChatMessage getMessage(User user, int index) throws InterruptedException {
+        synchronized (getOther(user)) {
+            if (getOther(user).size() <= index) {
+                getOther(user).wait(Constants.TIMEOUT * 1000);
+                if (getOther(user).size() <= index) {
+                    return null;
+                }
+            }
+            return getOther(user).get(index);
+        }
     }
 
     public ChatHistory getHistory() {
-        return history;
+        return new ChatHistory(first.getValue(), second.getValue());
     }
 
     public void leaveChat(User user) throws InterruptedException {

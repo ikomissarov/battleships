@@ -32,11 +32,8 @@ public class ChatController {
         ChatResponse response;
         try {
             ChatMessage msg = new ChatMessage(user.getName(), text, new Date());
-            if (chat.sendMessage(user, msg)) {
-                response = new ChatResponse(msg);
-            } else {
-                response = new ChatResponse(CommonResponse.Type.ERROR, "Unable to send a message, try again.");
-            }
+            chat.sendMessage(user, msg);
+            response = new ChatResponse(msg);
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
             response = new ChatResponse(CommonResponse.Type.ERROR, e.getLocalizedMessage());
@@ -45,12 +42,12 @@ public class ChatController {
     }
 
     @RequestMapping(path = "/subscribe", method = RequestMethod.GET)
-    public ChatResponse subscribe(User user) {
+    public ChatResponse subscribe(User user, @RequestParam int index) {
         Chat chat = user.getChat();
         ChatResponse response;
         try {
-            ChatMessage msg = chat.getMessage(user);
-            logger.debug("{} subscribe msg: [{}]", user.getName(), (msg == null ? null : msg.getText()));
+            ChatMessage msg = chat.getMessage(user, index);
+            logger.debug("{} subscribe msg #{}: [{}]", user.getName(), index, (msg == null ? null : msg.getText()));
 
             if (msg != null) {
                 if (msg == Constants.POISON_MSG) {

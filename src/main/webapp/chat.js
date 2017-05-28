@@ -34,6 +34,7 @@ $(document).ready(function () {
     });
 
     subscribe.errorCount = 0;
+    subscribe.incomingMsgCount = 0;
     subscribe.onError = function () {
         if (++subscribe.errorCount <= 10) {
             setTimeout(subscribe, 1000);
@@ -61,11 +62,12 @@ $(document).ready(function () {
         });
 
     function subscribe() {
-        $.getJSON('chat/subscribe')
+        $.getJSON('chat/subscribe?index=' + subscribe.incomingMsgCount)
             .done(function (data) {
                 switch (data.type) {
                     case "MSG":
                         subscribe.errorCount = 0;
+                        subscribe.incomingMsgCount++;
                         showMessage(data.message, hisMsgProtoElem);
                         onMessageReceived();
                         subscribe();
